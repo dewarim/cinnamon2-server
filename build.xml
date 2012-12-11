@@ -1,0 +1,588 @@
+<!--
+	Ant build script to build the cinnamon server using distributed libs.
+	Place this script in the parent directory of Server/.
+	Or run it with eclipse and supply the parameter 
+	Base direcotry == ${workspace_loc:/}
+-->
+
+<project name="Cinnamon">
+    <description>
+        build file for the Cinnamon server
+    </description>
+
+    <property name="app.name" value="cinnamon"/>
+    
+    <property environment="env"/>    
+    <property name="workspace.home" value="${env.CINNAMON2_SOURCE}"/>
+    <property name="lib.home" value="${env.JAVA_LIB_HOME}"/>
+    <property name="lib.groovy" value="${env.GRAILS_HOME}/lib/org.codehaus.groovy/groovy-all/jars/groovy-all-1.8.8.jar"/>
+    
+    <property name="java.source" value="1.6"/>
+    <property name="java.target" value="1.6"/>
+    <property name="java.bootstrap.path" value="/home/ingo/workspace2/oldJava/java-6-sun/jre/lib/rt.jar"/>
+    
+    <property name="dandelion.home" value="${workspace.home}/Dandelion"/>
+    <property name="dandelion.lib" value="${dandelion.home}/lib"/>
+
+    <property name="safran.home" value="${workspace.home}/CinnamonClient"/>
+    <property name="safran.src" value="${safran.home}/src"/>
+    <property name="safran.build" value="${safran.home}/build"/>
+    <property name="safran.build.classes" value="${safran.build}/classes"/>
+    <property name="safran.jar" value="${safran.home}/safran.jar"/>
+    <property name="safran.dandelion.jar" value="${dandelion.lib}/safran.mini.jar"/>
+
+    <property name="utils.home" value="${workspace.home}/CinnamonUtils"/>
+    <property name="utils.src" value="${utils.home}/src"/>
+    <property name="utils.build" value="${utils.home}/build"/>
+    <property name="utils.build.classes" value="${utils.build}/classes"/>
+    <property name="utils.jar" value="${utils.build}/utils.jar"/>
+
+    <property name="entitylib.home" value="${workspace.home}/EntityLib"/>
+    <property name="entitylib.src" value="${entitylib.home}/src"/>
+    <property name="entitylib.build" value="${entitylib.home}/build"/>
+    <property name="entitylib.build.classes" value="${entitylib.build}/classes"/>
+    <property name="entitylib.jar" value="${entitylib.build}/entitylib.jar"/>
+
+    <property name="server.home" value="${workspace.home}/Server"/>
+    <property name="server.src" value="${server.home}/src"/>
+    <property name="build.home" value="${server.home}/build"/>
+    <property name="web.home" value="${server.home}/web"/>
+    <property name="dist.home" value="${server.home}/target"/>
+    <property name="docs.home" value="${server.home}/doc"/>
+
+    <property name="cinnamonBase.home" value="${workspace.home}/CinnamonBase"/>
+    <property name="cinnamonBase.src" value="${cinnamonBase.home}/src"/>
+    <property name="cinnamonBase.build" value="${cinnamonBase.home}/build"/>
+    <property name="cinnamonBase.build.classes" value="${cinnamonBase.build}/classes"/>
+    <property name="cinnamonBase.jar" value="${cinnamonBase.build}/cinnamonBase.jar"/>
+
+    <property name="hibernate.home" value="${lib.home}/hibernate-distribution-3.6.8.Final"/>
+    <property name="hibernate.lib" value="${hibernate.home}/lib"/>
+    <property name="hibernate.lib.required" value="${hibernate.lib}/required"/>
+    <property name="hibernate.lib.optional" value="${hibernate.lib}/optional"/>
+    <property name="hibernate.lib.jpa" value="${hibernate.lib}/jpa/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+
+    <property name="lib.servlet_api" value="${lib.home}/servlet-api-2.5.jar"/>
+    <!-- <property name="lib.servlet_api" value="${lib.home}/servlet-api-3.0.jar"/> -->
+
+    <property name="lib.testng.home" value="${lib.home}/testng-6.3"/>
+    <property name="lib.testng" value="${lib.testng.home}/testng-6.3.jar"/>
+    <property name="lib.commons.collections"
+              value="${lib.home}/commons-collections-3.2.1/commons-collections-3.2.1.jar"/>
+    <property name="lib.commons.httpclient.home" value="${lib.home}/commons-httpclient-3.1"/>
+    <property name="lib.commons.httpclient" value="${lib.commons.httpclient.home}/commons-httpclient-3.1.jar"/>
+    <property name="lib.commons.fileupload.path" value="${lib.home}/commons-fileupload-1.2.1/lib"/>
+    <property name="lib.commons.fileupload.name" value="commons-fileupload-1.2.1.jar"/>
+    <property name="lib.commons.fileupload" value="${lib.commons.fileupload.path}/${lib.commons.fileupload.name}"/>
+    <property name="lib.commons.logging.home" value="${lib.home}/commons-logging-1.1.1"/>
+    <property name="lib.commons.logging" value="${lib.commons.logging.home}/commons-logging-1.1.1.jar"/>
+    <property name="lib.commons.logging.api" value="${lib.commons.logging.home}/commons-logging-api-1.1.1.jar"/>
+    <property name="lib.commons.compress.home" value="${lib.home}/commons-compress-1.3"/>
+    <property name="lib.commons.compress" value="${lib.commons.compress.home}/commons-compress-1.3.jar"/>
+
+    <property name="lib.commons.io.home" value="${lib.home}/commons-io-2.1"/>
+    <property name="lib.commons.io" value="${lib.commons.io.home}/commons-io-2.1.jar"/>
+    <property name="lib.commons.codec.home" value="${lib.home}/commons-codec-1.5"/>
+    <property name="lib.commons.codec" value="${lib.commons.codec.home}/commons-codec-1.5.jar"/>
+
+    <!-- tika and dependencies (as far as they are not included elsewhere already) -->
+    <property name="lib.tika.core" value="${lib.home}/tika-core-1.1-SNAPSHOT.jar"/>
+    <property name="lib.tika.parsers" value="${lib.home}/tika-parsers-1.1-SNAPSHOT.jar"/>
+    <property name="lib.pdfbox" value="${lib.home}/pdfbox-1.6.0.jar"/>
+    <property name="lib.jempbox" value="${lib.home}/jempbox-1.6.0.jar"/>
+    <property name="lib.fontbox" value="${lib.home}/fontbox-1.6.0.jar"/>
+    <property name="lib.tagsoup" value="${lib.home}/tagsoup-1.2.1.jar"/>
+    <property name="lib.geronimo-stax-api" value="${lib.home}/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+    <property name="lib.metadata-extractor" value="${lib.home}/metadata-extractor-2.4.0-beta-1.jar"/>
+    <property name="lib.poi" value="${lib.home}/poi-3.8-beta5/poi-3.8-beta5-20111217.jar"/>
+    <property name="lib.poi.ooxml" value="${lib.home}/poi-3.8-beta5/poi-ooxml-3.8-beta5-20111217.jar"/>
+    <property name="lib.poi.ooxml.schemas" value="${lib.home}/poi-3.8-beta5/poi-ooxml-schemas-3.8-beta5-20111217.jar"/>
+    <property name="lib.poi.scratchpad" value="${lib.home}/poi-3.8-beta5/poi-scratchpad-3.8-beta5-20111217.jar"/>
+    <property name="lib.xml-apis" value="${lib.home}/xml-commons-external-1.4.01/xml-apis.jar"/>
+    <property name="lib.asm" value="${lib.home}/asm-4.0/lib/asm-4.0.jar"/>
+    <property name="lib.xbean" value="${lib.home}/xmlbeans-2.5.0/lib/xbean.jar"/>
+    <property name="lib.xbean_xpath" value="${lib.home}/xmlbeans-2.5.0/lib/xbean_xpath.jar"/>
+    <property name="lib.xbean.resolver" value="${lib.home}/xmlbeans-2.5.0/lib/resolver.jar"/>
+    <property name="lib.xbean.xmlpublic" value="${lib.home}/xmlbeans-2.5.0/lib/xmlpublic.jar"/>
+    <property name="lib.xbean.jsr173_api" value="${lib.home}/xmlbeans-2.5.0/lib/jsr173_1.0_api.jar"/>
+    <property name="lib.xbean.qname" value="${lib.home}/xmlbeans-2.5.0/lib/xmlbeans-qname.jar"/>
+    <property name="lib.bouncyCastle" value="${lib.home}/crypto-146"/>
+    <property name="lib.bouncyCastle.provider" value="${lib.bouncyCastle}/jars/bcprov-jdk16-146.jar"/>
+    <property name="lib.bouncyCastle.bcmail" value="${lib.bouncyCastle}/jars/bcmail-jdk16-146.jar"/>
+    <property name="lib.icu4j" value="${lib.home}/icu4j-4_8_1_1.jar"/>
+    <property name="lib.boilerpipe" value="${lib.home}/boilerpipe-1.2.0/boilerpipe-1.2.0.jar"/>
+    <property name="lib.netcdf" value="${lib.home}/netcdf/netcdfAllNoSLF4J-4.2.jar"/>
+
+
+    <property name="lib.slf4j" value="${lib.home}/slf4j-1.6.4"/>
+    <property name="lib.slf4j.api" value="${lib.slf4j}/slf4j-api-1.6.4.jar"/>
+    <property name="lib.logback" value="${lib.home}/logback-1.0.0"/>
+    <property name="lib.logback.core" value="${lib.logback}/logback-core-1.0.0.jar"/>
+    <property name="lib.logback.classic" value="${lib.logback}/logback-classic-1.0.0.jar"/>
+    <property name="lib.dom4j.home" value="${lib.home}/dom4j-1.6.1"/>
+    <property name="lib.dom4j" value="${lib.dom4j.home}/dom4j-1.6.1.jar"/>
+    <property name="lib.jaxen" value="${lib.home}/jaxen-1.1.3/jaxen-1.1.3.jar"/>
+    <property name="lib.c3p0" value="${lib.home}/c3p0-0.9.1.2/lib/c3p0-0.9.1.2.jar"/>
+    <property name="lib.postgres" value="${lib.home}/postgresql-9.1-901.jdbc4.jar"/>
+    <property name="lib.xmlunit" value="${lib.home}/xmlunit-1.3/lib/xmlunit-1.3.jar"/>
+    <property name="lib.lucene.home" value="${lib.home}/lucene-3.5.0"/>
+    <property name="lib.lucene" value="${lib.lucene.home}/lucene-core-3.5.0.jar"/>
+    <property name="lib.lucene.xmlquery"
+              value="${lib.lucene.home}/contrib/xml-query-parser/lucene-xml-query-parser-3.5.0.jar"/>
+    <property name="lib.lucene.regex" value="${lib.lucene.home}/contrib/queries/lucene-queries-3.5.0.jar"/>
+    <property name="lib.jtds.home" value="${lib.home}/jtds-1.2.5"/>
+    <property name="lib.jtds" value="${lib.home}/jtds-1.2.5/jtds-1.2.5.jar"/>
+    <property name="lib.mysql" value="${lib.home}/mysql-connector-java-5.1.18/mysql-connector-java-5.1.18-bin.jar"/>
+    <property name="lib.javamail" value="${lib.home}/javamail-1.4.4/mail.jar"/>
+    <property name="lib.velocity" value="${lib.home}/velocity-1.7/velocity-1.7.jar"/>
+    <property name="lib.velocity.dep" value="${lib.home}/velocity-1.7/velocity-1.7-dep.jar"/>    
+
+    <property name="compile.debug" value="true"/>
+    <path id="compile.classpath">
+        <pathelement location="${hibernate.home}/hibernate3.jar"/>
+        <fileset dir="${hibernate.lib.required}" includes="*.jar" excludes="dom4j* slf4j* commons-collections*"/>
+        <pathelement location="${hibernate.lib.jpa}"/>
+        <pathelement location="${lib.servlet_api}"/>
+        <pathelement location="${lib.testng}"/>
+        <pathelement location="${lib.commons.httpclient}"/>
+        <pathelement location="${lib.slf4j.api}"/>
+        <fileset dir="${lib.logback}" includes="logback-c*.jar" excludes="*sources.jar"/>
+        <pathelement location="${lib.dom4j}"/>
+        <pathelement location="${lib.xmlunit}"/>
+        <pathelement location="${lib.lucene}"/>
+        <pathelement location="${lib.lucene.xmlquery}"/>
+        <pathelement location="${lib.lucene.regex}"/>
+        <pathelement location="${lib.commons.io}"/>
+        <pathelement location="${lib.commons.compress}"/>
+        <pathelement location="${lib.javamail}"/>
+        <pathelement location="${lib.velocity}"/>
+        <pathelement location="${lib.tika.core}"/>
+        <pathelement location="${lib.tika.parsers}"/>
+        <pathelement location="${lib.groovy}"/>
+    </path>
+
+
+    <path id="cinnamon.classpath">
+        <fileset dir="${lib.commons.httpclient.home}" includes="commons-httpclient-3.1.jar"/>
+        <fileset dir="${lib.commons.fileupload.path}" includes="${lib.commons.fileupload.name}"/>
+        <fileset dir="${lib.commons.io.home}" includes="${lib.commons.io}"/>
+
+        <fileset dir="${lib.home}" includes="servlet-api*.jar"/>
+
+        <!-- include previously generated support libs: -->
+        <fileset dir="${server.home}/lib" includes="*.jar"/>
+
+        <fileset dir="${hibernate.home}" includes="*.jar" excludes="hibernate-testing*"/>
+    </path>
+
+
+    <!-- target: usePostgres -->
+    <!--
+         You should copy persistence.example.xml to persistence.source.xml
+         and make any necessary changes there.
+         When building for Postgres, MSSQL2000 or MSSQL, you can add useX to before
+         the prepare target in your call to ant.
+     -->
+
+    <target name="copyPersistenceSource">
+        <copy todir="${server.home}/META-INF" overwrite="true">
+            <fileset dir="${server.home}/META-INF/">
+                <include name="persistence.source.xml"/>
+            </fileset>
+            <mapper type="glob" from="persistence.source.xml" to="persistence.xml"/>
+        </copy>
+    </target>
+
+
+    <!-- target usePostgres -->
+    <target name="usePostgres" depends="copyPersistenceSource">
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.dialect@"
+                 value="org.hibernate.dialect.PostgreSQLDialect"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.connection.driver_class@"
+                 value="org.postgresql.Driver"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.jdbc.use_streams_for_binary@"
+                 value="false"/>
+        <property name="lib.database" value="${lib.postgres}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.database}"/>
+    </target>
+
+    <!-- target useMSSQL2000 -->
+    <target name="useMSSQL2000" depends="copyPersistenceSource">
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.dialect@"
+                 value="org.hibernate.dialect.SQLServerDialect"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.connection.driver_class@"
+                 value="net.sourceforge.jtds.jdbc.Driver"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.jdbc.use_streams_for_binary@"
+                 value="true"/>
+        <property name="lib.database" value="${lib.jtds.home}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.jtds}"/>
+    </target>
+
+    <!-- target useMSSQL (2005) -->
+    <target name="useMSSQL" depends="copyPersistenceSource">
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.dialect@"
+                 value="server.data.MSSQLServerNativeDialect"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.connection.driver_class@"
+                 value="net.sourceforge.jtds.jdbc.Driver"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.jdbc.use_streams_for_binary@"
+                 value="true"/>
+        <property name="lib.database" value="${lib.jtds.home}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.jtds}"/>
+    </target>
+
+    <!-- target useMSSQL (2008) -->
+    <target name="useMSSQL2008" depends="copyPersistenceSource">
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.dialect@"
+                 value="org.hibernate.dialect.SQLServerDialect"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.connection.driver_class@"
+                 value="net.sourceforge.jtds.jdbc.Driver"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.jdbc.use_streams_for_binary@"
+                 value="true"/>
+        <property name="lib.database" value="${lib.jtds}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.jtds}"/>
+    </target>
+    
+    <!-- target useMySQL -->
+    <target name="useMySQL" depends="copyPersistenceSource">
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.dialect@"
+                 value="org.hibernate.dialect.MySQLInnoDBDialect"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.connection.driver_class@"
+                 value="com.mysql.jdbc.Driver"/>
+        <replace file="${server.home}/META-INF/persistence.xml" token="@hibernate.jdbc.use_streams_for_binary@"
+                 value="true"/>
+        <property name="lib.database" value="${lib.mysql}"/>
+    </target>
+    <!-- - - - - - - - - - - - - - - - - -
+target: prepare
+- - - - - - - - - - - - - - - - - -->
+    <!--
+
+       The "prepare" target is used to create the "build" destination directory,
+       and copy the static contents of your web application to it.  If you need
+       to copy static files from external dependencies, you can customize the
+       contents of this task.
+
+       Normally, this task is executed indirectly when needed.
+
+     -->
+    <target name="prepare">
+        <mkdir dir="${utils.build}"/>
+        <mkdir dir="${utils.build.classes}"/>
+
+        <mkdir dir="${entitylib.build}"/>
+        <mkdir dir="${entitylib.build.classes}"/>
+
+        <mkdir dir="${cinnamonBase.build}"/>
+        <mkdir dir="${cinnamonBase.build}/classes"/>
+
+        <!-- Create build directories as needed -->
+        <mkdir dir="${build.home}"/>
+        <mkdir dir="${build.home}/META-INF"/>
+        <mkdir dir="${build.home}/WEB-INF"/>
+        <mkdir dir="${build.home}/WEB-INF/classes"/>
+
+        <!-- Copy external dependencies as required -->
+        <mkdir dir="${build.home}/WEB-INF/classes/META-INF"/>
+        <copy todir="${build.home}/WEB-INF/classes/META-INF" file="${server.home}/META-INF/persistence.xml"/> 
+<!--        <copy todir="${build.home}/WEB-INF/classes" file="${server.home}/logback-test.xml"/> -->
+        <mkdir dir="${build.home}/WEB-INF/lib"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.commons.codec}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.commons.collections}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.commons.fileupload}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.commons.httpclient}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.commons.io}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.commons.logging}"/>
+        <!-- needed by httpclient -->
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.jaxen}"/>
+        <!-- needed by dom4j -->
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.dom4j}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.lucene}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.lucene.xmlquery}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.lucene.regex}"/>
+
+        <copy todir="${build.home}/WEB-INF/lib" file="${hibernate.home}/hibernate3.jar"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${hibernate.lib.jpa}"/>
+
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.slf4j.api}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.logback.core}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.logback.classic}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.c3p0}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.javamail}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.velocity}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.velocity.dep}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.groovy}"/>
+
+        <!-- tika dependencies: -->
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.tika.core}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.tika.parsers}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.pdfbox}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.jempbox}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.fontbox}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.tagsoup}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.geronimo-stax-api}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.metadata-extractor}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.poi}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.poi.ooxml}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.poi.ooxml.schemas}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.poi.scratchpad}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.asm}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.xml-apis}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.xbean}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.xbean_xpath}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.xbean.resolver}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.xbean.xmlpublic}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.xbean.jsr173_api}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.xbean.qname}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.bouncyCastle.bcmail}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.bouncyCastle.provider}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.icu4j}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.boilerpipe}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${lib.netcdf}"/>
+       
+        <copy todir="${build.home}/WEB-INF/classes" file="${entitylib.home}/c3p0.properties"/>
+
+        <copy todir="${build.home}/WEB-INF/lib">
+            <fileset dir="${hibernate.lib.required}"
+                     includes="*.jar"
+                     excludes="commons-collections*.jar slf4j* dom4j*"
+                    />
+        </copy>
+    </target>
+
+    <!-- =================================
+    target: all
+   ================================= -->
+    <target name="all" depends="clean, prepare, compile" description="Clean build and dist directories, then compile"/>
+
+    <!-- =================================
+    target: clean
+   ================================= -->
+    <target name="clean" description="Delete old build and dist directories">
+        <delete dir="${cinnamonBase.build}"/>
+        <delete dir="${utils.build}"/>
+        <delete dir="${entitylib.build}"/>
+        <delete dir="${build.home}"/>
+        <delete dir="${dist.home}"/>
+        <delete dir="${safran.build}"/>
+    </target>
+
+
+    <!-- - - - - - - - - - - - - - - - - -
+target: compile.utils
+- - - - - - - - - - - - - - - - - -->
+    <target name="compile.utils" description="compile the Cinnamon utility lib">
+        <javac srcdir="${utils.src}"
+               destdir="${utils.build.classes}"
+               source="${java.source}" target="${java.target}"
+               bootclasspath="${java.bootstrap.path}"
+               debug="${compile.debug}" includeantruntime="false">
+            <classpath>
+                <path refid="compile.classpath"/>
+                <pathelement location="${cinnamonBase.jar}"/>
+            </classpath>
+        </javac>
+
+        <copy todir="${utils.build.classes}" file="${entitylib.home}/c3p0.properties"/>
+        <copy todir="${utils.build}/lib" file="${lib.c3p0}"/>
+
+        <jar destfile="${utils.jar}" basedir="${utils.build.classes}">
+            <zipgroupfileset dir="${utils.build}/lib/">
+                <include name="**/*.jar"/>
+            </zipgroupfileset>
+            <include name="**/*.**"/>
+            <include name="**/META-INF/*.xml"/>
+        </jar>
+        <copy todir="${server.home}/lib" file="${utils.jar}"/>
+        <copy todir="${dandelion.lib}" file="${utils.jar}"/>
+    </target>
+
+    <target name="compile.base" description="compile the Cinnamon base lib">
+        <javac srcdir="${cinnamonBase.src}"
+               destdir="${cinnamonBase.build.classes}"
+               source="${java.source}" target="${java.target}"
+               bootclasspath="${java.bootstrap.path}"
+               debug="${compile.debug}" includeantruntime="false">
+            <classpath>
+                <path refid="compile.classpath"/>
+            </classpath>
+        </javac>
+
+        <jar destfile="${cinnamonBase.jar}" basedir="${cinnamonBase.build.classes}">
+            <include name="**/*.class"/>
+        </jar>
+        <copy todir="${server.home}/lib" file="${cinnamonBase.jar}"/>
+        <copy todir="${safran.home}/lib" file="${cinnamonBase.jar}"/>
+        <copy todir="${dandelion.lib}" file="${cinnamonBase.jar}"/>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - -
+target: compile.entitylib
+- - - - - - - - - - - - - - - - - -->
+    <target name="compile.entitylib" description="compile the entitylib">
+        <!-- Compile package EntityLib -->
+        <javac srcdir="${entitylib.src}"
+               destdir="${entitylib.build.classes}"
+               source="${java.source}" target="${java.target}"
+               bootclasspath="${java.bootstrap.path}"
+               debug="${compile.debug}" includeantruntime="false">
+            <classpath>
+                <path refid="compile.classpath"/>
+                <pathelement location="${utils.jar}"/>
+                <pathelement location="${cinnamonBase.jar}"/>
+            </classpath>
+        </javac>
+        
+        <copy todir="${entitylib.build}/lib" file="${lib.commons.compress}"/>
+        <jar destfile="${entitylib.jar}" basedir="${entitylib.build.classes}">
+            <zipgroupfileset dir="${entitylib.build}/lib/">
+                <include name="**/*.jar"/>
+            </zipgroupfileset>
+            <include name="**/*.class"/>
+            <include name="**/META-INF/*.xml"/>
+        </jar>
+
+        <copy todir="${server.home}/lib" file="${entitylib.jar}"/>
+        <copy todir="${dandelion.lib}" file="${entitylib.jar}"/>
+    </target>
+
+
+    <!-- =================================
+    target: javadoc
+   ================================= -->
+    <!--
+
+       The "javadoc" target creates Javadoc API documentation for the Java
+       classes included in your application.  Normally, this is only required
+       when preparing a distribution release, but is available as a separate
+       target in case the developer wants to create Javadocs independently.
+
+     -->
+    <target name="javadoc" depends="compile" description="Create Javadoc API documentation">
+        <mkdir dir="doc/api"/>
+        <javadoc destdir="doc/api" packagenames="*" private="true">
+            <fileset dir="${server.src}" defaultexcludes="yes"/>
+            <fileset dir="${entitylib.src}" defaultexcludes="yes"/>
+            <fileset dir="${utils.src}" defaultexcludes="yes"/>
+            <fileset dir="${safran.src}" defaultexcludes="yes"/>
+            <fileset dir="${cinnamonBase.src}" defaultexcludes="yes"/>
+
+            <classpath>
+                <pathelement location="${lib.testng}"/>
+                <path refid="compile.classpath"/>
+                <path refid="cinnamon.classpath"/>
+                <pathelement location="${utils.jar}"/>
+                <pathelement location="${entitylib.jar}"/>
+                <pathelement location="${cinnamonBase.jar}"/>
+            </classpath>
+            <header>
+                <![CDATA[<a target="_top" href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=196124&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net_Logo" /></a>]]></header>
+            <bottom>
+                <![CDATA[Return to the <a target="_top" href="http://cinnamon.sf.net">cinnamon</a> content management system homepage]]></bottom>
+        </javadoc>
+    </target>
+
+    <!-- =================================
+    target: compile
+   ================================= -->
+    <target name="compile" depends="compile.base, compile.utils, compile.entitylib" description="Compile Java sources">
+
+        <!-- copy libs -->
+        <copy todir="${build.home}/WEB-INF/lib" file="${utils.jar}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${entitylib.jar}"/>
+        <copy todir="${build.home}/WEB-INF/lib" file="${cinnamonBase.jar}"/>
+
+        <!-- Compile Java classes as necessary -->
+        <javac srcdir="${server.src}"
+               destdir="${build.home}/WEB-INF/classes"
+               source="${java.source}" target="${java.target}"
+               bootclasspath="${java.bootstrap.path}"
+               debug="${compile.debug}" includeantruntime="false">
+            <sourcepath>
+                <pathelement location="${utils.src}"/>
+            </sourcepath>
+            <classpath>
+                <path refid="compile.classpath"/>
+                <path refid="cinnamon.classpath"/>
+            </classpath>
+        </javac>
+
+        <!-- Copy application resources -->
+        <copy todir="${build.home}/WEB-INF/classes">
+            <fileset dir="${server.src}" excludes="**/*.java"/>
+        </copy>
+
+        <!-- copy web.xml usw. -->
+        <copy todir="${build.home}/WEB-INF">
+            <fileset dir="${server.home}/WEB-INF/" includes="*.xml"/>
+        </copy>
+        <copy todir="${build.home}/META-INF">
+            <fileset dir="${server.home}/META-INF/" includes="persistence.xml"/>
+        </copy>
+
+    </target>
+
+
+    <!-- =================================
+    target: dist
+   ================================= -->
+    <!--
+
+       The "dist" target creates a binary distribution of your application
+       in a directory structure ready to be archived in a tar.gz or zip file.
+       Note that this target depends on two others:
+
+       * "compile" so that the entire web application (including external
+         dependencies) will have been assembled
+
+ //disabled - is only needed for public dist. * "javadoc" so that the application Javadocs will have been created
+
+     -->
+    <target name="dist" depends="compile, versionInfo" description="Create binary distribution">
+        <!-- Copy documentation subdirectories -->
+        <mkdir dir="doc/docs/api"/>
+        <copy todir="${dist.home}/docs/api">
+            <fileset dir="doc/api"/>
+        </copy>
+        <!-- Create application WAR file -->
+        <jar destfile="${dist.home}/${app.name}.war" basedir="${build.home}"
+             excludes="**/slf4j-api-1.5.2* **/slf4j-api.jar **/javassist.jar **/dom4j.jar **/jta.jar"
+                />
+    </target>
+
+    <target name="makeJar" depends="dist" description="create cinnamon.jar without dependencies.">
+        <jar basedir="${build.home}/WEB-INF/classes" destfile="${dist.home}/${app.name}.jar">
+            <exclude name="**/logback-test.xml"/>
+            <manifest>
+                <attribute name="Main-Class" value="server.MailSender"/>
+            </manifest>
+        </jar>
+    </target>
+    
+    <target name="dist_mssql2008" depends="clean, prepare, useMSSQL2008, compile, dist"
+            description="create public version for MSSQL-2008 dependencies.">
+    </target>
+
+    <target name="makeFullJar" depends="dist" description="create cinnamon.jar with all dependencies">
+        <jar destfile="${dist.home}/${app.name}_full.jar" basedir="${build.home}/WEB-INF/classes"
+             excludes="**/slf4j-api-1.5.2* **/slf4j-api.jar **/javassist.jar **/dom4j.jar **/jta.jar"
+                >
+            <zipgroupfileset dir="${build.home}/WEB-INF/lib/">
+                <include name="**/*.jar"/>
+            </zipgroupfileset>
+            <include name="**/*.class"/>
+            <manifest>
+                <attribute name="Main-Class" value="server.MailSender"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="versionInfo">
+        <propertyfile
+                file="${server.home}/version.properties" comment="Build version info">
+            <entry key="buildDate" type="date" value="now"/>
+            <entry key="buildNum" default="0" type="int" operation="+" value="1"/>
+        </propertyfile>
+    </target>
+
+
+</project>

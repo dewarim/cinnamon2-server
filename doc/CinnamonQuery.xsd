@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://cinnamon-cms.de/CinnamonQuery" 
+		xmlns="http://www.w3.org/2001/XMLSchema"
+		xmlns:xsd="http://cinnamon-cms.de/CinnamonQuery" 
+		elementFormDefault="qualified"
+		>
+
+    <complexType name="queryType">
+    	<sequence>
+    		<element name="select" type="xsd:selectType"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
+    		<element name="where" type="xsd:whereType" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="parameterList" type="xsd:parameterListType" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="selectType">
+    	<sequence>
+    		<element name="selection" type="xsd:selectionType" maxOccurs="1" minOccurs="1"></element>
+            <element name="from" type="xsd:fromType" maxOccurs="1" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+    
+    <complexType name="whereType">
+       <sequence>
+       <element name="group" type="xsd:groupType" maxOccurs="unbounded" minOccurs="1"></element>
+       </sequence>
+    </complexType>
+
+    <complexType name="parameterListType">
+    	<sequence>
+    		<element name="param" type="xsd:paramType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    
+    <complexType name="paramType">
+    	<sequence>
+    		<element name="name" type="xsd:nameType"></element>
+    		<element name="type" type="xsd:myType"></element>
+    		<element name="value" type="xsd:valueType"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="subSelectStatementType">
+    	<sequence>
+    		<element name="select" type="xsd:selectType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="where" type="xsd:whereType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    
+    <complexType name="selectionType">
+    	<sequence>
+    		<element name="field" type="xsd:fieldType" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+    
+    
+    <complexType name="fromType">
+    	<sequence>
+    		<element name="table" type="xsd:tableType" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+    
+    <simpleType name="nameType">
+    	<restriction base="string"></restriction>
+    </simpleType>
+
+
+    <simpleType name="myType">
+    	<annotation>
+    		<documentation>
+    			Each param is added to the Query's parameterList.
+    		</documentation>
+    	</annotation>
+    	<restriction base="string">
+    		<enumeration value="Long"></enumeration>
+    		<enumeration value="String"></enumeration>
+    		<enumeration value="NULL"></enumeration>
+    	</restriction>
+    </simpleType>
+    
+
+    <complexType name="fieldType">
+    	<sequence>
+    		<element name="tableAlias" type="xsd:tableAliasType" maxOccurs="1" minOccurs="0"></element>
+    		<element name="name" type="xsd:nameType"></element>
+    	</sequence>
+    </complexType>
+    
+
+    <simpleType name="tableAliasType">
+    	<restriction base="string"></restriction>
+    </simpleType>
+
+    <complexType name="tableType">
+    	<sequence>
+    		<element name="name" type="xsd:nameType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="tableAlias" type="xsd:tableAliasType" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="groupType">
+    	<sequence>
+            <element name="negate" type="xsd:negateType" maxOccurs="1" minOccurs="0"></element>
+            <choice maxOccurs="1" minOccurs="1">
+    			<element name="comparison" type="xsd:comparisonType"></element>
+    			<element name="subSelect" type="xsd:subSelectType"></element>
+    			<element name="parenthesis"
+    				type="xsd:parenthesisType">
+    			</element>
+    		</choice>
+    		<element name="combinator" type="xsd:combinatorType"
+    			maxOccurs="1" minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <simpleType name="negateType">
+    	<restriction base="string"></restriction>
+    </simpleType>
+
+    <simpleType name="combinatorType">
+    	<restriction base="string">
+    		<enumeration value="and"></enumeration>
+    		<enumeration value="or"></enumeration>
+    	</restriction>
+    </simpleType>
+
+    <complexType name="comparisonType">
+    	<sequence>
+    		<element name="negate" type="xsd:negateType" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="field" type="xsd:fieldType" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="operator" type="xsd:operatorType"></element>
+    		<choice maxOccurs="1" minOccurs="1">
+    			<element name="field" type="xsd:fieldType"></element>
+    			<element name="parameterName" type="string"></element>
+    		</choice>
+    	</sequence>
+    </complexType>
+
+
+    <simpleType name="operatorType">
+    	<restriction base="string">
+    		<enumeration value="="></enumeration>
+    		<enumeration value="LIKE"></enumeration>
+    		<enumeration value="!="></enumeration>
+    		<enumeration value="&lt;"></enumeration>
+    		<enumeration value="&lt;&gt;"></enumeration>
+    		<enumeration value="&gt;"></enumeration>
+    		<enumeration value="&gt;="></enumeration>
+    		<enumeration value="&lt;="></enumeration>
+    	</restriction>
+    </simpleType>
+
+    <complexType name="subSelectType">
+    	<sequence>
+    		<element name="field" type="xsd:fieldType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="negate" type="xsd:negateType" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="subSelectStatement" type="xsd:subSelectStatementType" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <simpleType name="valueType">
+    	<restriction base="string"></restriction>
+    </simpleType>
+
+  <element name="query" type="xsd:queryType"></element>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <complexType name="parenthesisType">
+  	<sequence maxOccurs="unbounded" minOccurs="1">
+  		<element name="group" type="xsd:groupType"></element>
+  	</sequence>
+  </complexType>
+
+
+</schema>

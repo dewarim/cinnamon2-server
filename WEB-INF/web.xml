@@ -1,0 +1,15 @@
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  <display-name>Cinnamon Server v2.3.1</display-name>
+  <listener>
+    <listener-class>server.helpers.HibernateListener</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>cmnserver</servlet-name>
+    <servlet-class>server.CmnServer</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cmnserver</servlet-name>
+    <url-pattern>/cinnamon/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>

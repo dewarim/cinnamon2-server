@@ -1,0 +1,35 @@
+Documentation for XML to HQL / SQL conversion:
+
+List of Elements:
+query: root element.
+
+select: encapsulates the "select ... from ..." part. child-nodes: <selection> and <from>
+selection: represents the "select ..." part. Contains one or more <field>-elements,
+	separated by <comma/>
+comma: empty element which is transformed into a ", "
+negate: empty element which is transformed into " not ". 
+parenthesis: wraps its content, one or more group elements, into (...) parenthesis.
+field: may contain a <tableAlias> as first element and must contain a <name> element.
+	 If a tableAlias is provided, it is appended with a ".".
+from: represents the "from ..." part of a select query. Contains 1 or more <table> elements.
+group: contains <comparison>, <subSelect> or <parenthesis>, preceeded by an optional <negate> and an <combinator>, 
+	which is only required if another <group> element follows.
+table: a table needs a <name> which may be followed by a <tableAlias>. 
+	You should use the Java classname (like ObjectSystemData) instead the raw table name.
+name: contains a string representing a name
+tableAlias: contains a string which is used as an alias for a name
+where: represents the conditional "where ..." part of a select-statement. 
+	Contains 1 or more group elements.
+combinator: contains a string for joining comparisons and / or subSelects with each other. Suggested values: "and", "or"
+comparison: contains a <field>, an <operator> and either a <parameterName> or another <field>
+parameterName: a string which refers to a <param> element in the <parameterList> at the end of the query.
+subSelect: contains a <field> which is compared to the result list of the following <subSelectStatement>
+subSelectStatement: the subSelectStatement contains a regular <select>+<where> statement.
+
+For an example, see Safran/testdata/xml_sql_test_input.txml
+
+As of version 0.5.5 of the CinnamonServer, the format described above is used in executeXmlQuery.
+This method returns a list of objects. The query should select a list of object ids.
+Example: SELECT osd.id FROM ObjectSystemData osd WHERE id>100 AMD id<200;
+
+	 

@@ -1,0 +1,95 @@
+List of all public API methods of the Cinnamon server.
+server/CmdInterpreter.java:       public Response connect(Hashtable<String,String> cmd) {                                                                     
+server/CmdInterpreter.java:       public Response create(Hashtable<String, Object> cmd) throws IOException {                                                  
+server/CmdInterpreter.java:       public Response listGroups(Hashtable<String, String> cmd) {                                                                 
+server/CmdInterpreter.java:       public Response copy(Hashtable<String,String> cmd) throws IOException{                                                      
+server/CmdInterpreter.java:       public Response createFolder(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response getAcls(Hashtable<String,String> cmd) {                                                                     
+server/CmdInterpreter.java:       public Response getAclEntry(Hashtable<String,String> cmd) {                                                                 
+server/CmdInterpreter.java:       public Response getUsersAcls(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response getUsersPermissions(Hashtable<String,String> cmd) {                                                         
+server/CmdInterpreter.java:       public Response getGroupsOfUser(Hashtable<String,String> cmd) {                                                             
+server/CmdInterpreter.java:       public Response listAclMembers(Hashtable<String,String> cmd) {                                                              
+server/CmdInterpreter.java:       public Response listAclEntries(Hashtable<String,String> cmd) {                                                              
+server/CmdInterpreter.java:       public Response getPermission(Hashtable<String,String> cmd) {                                                               
+server/CmdInterpreter.java:       public Response listPermissions(Hashtable<String,String> cmd) {                                                             
+server/CmdInterpreter.java:       public Response listLanguages(Hashtable<String,String> cmd) {                                                               
+server/CmdInterpreter.java:       public Response listMessages(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response createRelation(Hashtable<String, String> cmd) {                                                             
+server/CmdInterpreter.java:       public Response delete(Hashtable<String, String> cmd) {                                                                     
+server/CmdInterpreter.java:       public Response deleteAllVersions(Hashtable<String, String> cmd) {                                                          
+server/CmdInterpreter.java:       public Response deleteFolder(Hashtable<String, String> cmd) {                                                               
+server/CmdInterpreter.java:       public Response deleteRelation(Hashtable<String, String> cmd) {                                                             
+server/CmdInterpreter.java:       public Response getSubfolders(Hashtable<String,String> cmd) {                                                               
+server/CmdInterpreter.java:       public Response getRelations(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response getRelationTypes(Hashtable<String, String> cmd) {                                                           
+server/CmdInterpreter.java:       public Response getObjTypes(Hashtable<String,String> cmd) {                                                                 
+server/CmdInterpreter.java:       public Response getFolder(Hashtable<String,String> cmd) {                                                                   
+server/CmdInterpreter.java:       public Response getFolderByPath(Hashtable<String, String> cmd) {                                                            
+server/CmdInterpreter.java:       public Response getFormats(Hashtable<String,String> cmd) {                                                                  
+server/CmdInterpreter.java:       public Response getContent(Hashtable<String,String> cmd) {                                                                  
+server/CmdInterpreter.java:       public Response getObjects(Hashtable<String,String> cmd) {                                                                  
+server/CmdInterpreter.java:       public Response getObjectsWithCustomMetadata(Hashtable<String,String> cmd) {                                                
+server/CmdInterpreter.java:       public Response queryObjects(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response executeXmlQuery(Hashtable<String,String> cmd) {                                                             
+server/CmdInterpreter.java:       public Response queryFolders(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response getExtension(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response getMeta(Hashtable<String,String> cmd) {                                                                     
+server/CmdInterpreter.java:       public Response getFolderMeta(Hashtable<String,String> cmd) {                                                               
+server/CmdInterpreter.java:       public Response getSysMeta(Hashtable<String,String> cmd){                                                                   
+server/CmdInterpreter.java:       public Response setMeta(Hashtable<String,String> cmd) {                                                                     
+server/CmdInterpreter.java:       public Response setSysMeta(Hashtable<String,String> cmd) {                                                                  
+server/CmdInterpreter.java:       public Response lock(Hashtable<String,String> cmd) {                                                                        
+server/CmdInterpreter.java:       public Response unlock(Hashtable<String,String> cmd) {                                                                      
+server/CmdInterpreter.java:       public Response readMessage(Hashtable<String,String> cmd) {                                                                 
+server/CmdInterpreter.java:       public Response clearMessage(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response setContent(Hashtable<String,Object> cmd) throws IOException{                                                
+server/CmdInterpreter.java:       public Response version(Hashtable<String,Object> cmd) throws IOException{                                                   
+server/CmdInterpreter.java:       public Response disconnect(Hashtable<String,String> cmd) {                                                                  
+server/CmdInterpreter.java:       public Response getWorkflowTemplateList(Hashtable<String,String> cmd) {                                                     
+server/CmdInterpreter.java:       public Response createWorkflow(Hashtable<String,Object> cmd) {                                                              
+server/CmdInterpreter.java:       public Response updateFolder(Hashtable<String,String> cmd) {                                                                
+server/CmdInterpreter.java:       public Response getFolderTypes(Hashtable<String,String> cmd) {                                                              
+server/CmdInterpreter.java:       public Response getUser(Hashtable<String,String> cmd) {                                                                     
+server/CmdInterpreter.java:       public Response getUserByName(Hashtable<String,String> cmd) {                                                               
+server/CmdInterpreter.java:       public Response getUsers(Hashtable<String,String> cmd) {                                                                    
+server/CmdInterpreter.java:       public Response getObject(Hashtable<String,String> cmd) {                                                                   
+server/CmdInterpreter.java:       public Response getObjectsById(Hashtable<String,String> cmd) {                                                              
+server/CmdInterpreter.java:       public Response listIndexGroups(Hashtable<String,String> cmd){                                                              
+server/CmdInterpreter.java:       public Response getIndexGroup(Hashtable<String,String> cmd){                                                                
+server/CmdInterpreter.java:       public Response listIndexItems(Hashtable<String,String> cmd){                                                               
+server/CmdInterpreter.java:       public Response reindex(Hashtable<String,String> cmd){                                                                      
+server/CmdInterpreter.java:       public Response clearIndex(Hashtable<String,String> cmd){
+server/CmdInterpreter.java:       public Response search(Hashtable<String,String> cmd) {
+server/CmdInterpreter.java:       public Response searchObjects(Hashtable<String,String> cmd) {
+server/CmdInterpreter.java:       public Response searchFolders(Hashtable<String,String> cmd) {
+server/extension/QueryCustomTable.java:   public Response queryCustomTable(Hashtable<String,String> cmd) throws SQLException, TransformerException {
+server/extension/TransformationEngine.java:       public Response transformObject(Hashtable<String, String> cmd){
+server/extension/TransformationEngine.java:       public Response transformObjectToFile(Hashtable<String, String> cmd){
+server/extension/TransformationEngine.java:       public Response listTransformers(Hashtable<String, String> cmd){
+server/extension/admin/GroupManager.java: public Response createGroup(Hashtable<String,String> cmd) {
+server/extension/admin/GroupManager.java: public Response deleteGroup(Hashtable<String,String> cmd) {
+server/extension/admin/GroupManager.java: public Response addUserToGroup(Hashtable<String,String> cmd) {
+server/extension/admin/GroupManager.java: public Response removeUserFromGroup(Hashtable<String,String> cmd) {
+server/extension/admin/UserManager.java:  public Response createUser(Hashtable<String,String> cmd) {
+server/extension/admin/UserManager.java:  public Response deleteUser(Hashtable<String,String> cmd) {
+server/extension/admin/FormatManager.java:        public Response createFormat(Hashtable<String,String> cmd) {
+server/extension/admin/FormatManager.java:        public Response deleteFormat(Hashtable<String,String> cmd) {
+server/extension/admin/ObjectTypeManager.java:    public Response createObjectType(Hashtable<String,String> cmd) {
+server/extension/admin/ObjectTypeManager.java:    public Response deleteObjectType(Hashtable<String,String> cmd) {
+server/extension/admin/FolderTypeManager.java:    public Response createFolderType(Hashtable<String,String> cmd) {
+server/extension/admin/FolderTypeManager.java:    public Response deleteFolderType(Hashtable<String,String> cmd) {
+server/extension/admin/PermissionManager.java:    public Response createPermission(Hashtable<String,String> cmd) {
+server/extension/admin/PermissionManager.java:    public Response deletePermission(Hashtable<String,String> cmd) {
+server/extension/admin/RelationTypeManager.java:  public Response createRelationType(Hashtable<String,String> cmd) {
+server/extension/admin/RelationTypeManager.java:  public Response deleteRelationType(Hashtable<String,String> cmd) {
+server/extension/admin/AclManager.java:   public Response addGroupToAcl(Hashtable<String,String> cmd) {
+server/extension/admin/AclManager.java:   public Response createAcl(Hashtable<String,String> cmd) {
+server/extension/admin/AclManager.java:   public Response deleteAcl(Hashtable<String,String> cmd) {
+server/extension/admin/AclManager.java:   public Response editAcl(Hashtable<String,String> cmd) {
+server/extension/admin/AclManager.java:   public Response removeGroupFromAcl(Hashtable<String,String> cmd) {
+server/extension/admin/AclManager.java:   public Response addPermissionToAclEntry(Hashtable<String,String> cmd) {
+server/extension/admin/AclManager.java:   public Response removePermissionFromAclEntry(Hashtable<String,String> cmd) {
+server/extension/Translation.java:        public Response createTranslation(Hashtable<String, String> cmd){
+server/extension/Translation.java:        public Response checkTranslation(Hashtable<String,String> cmd){
+server/extension/Initializer.java:        public Response initializeDatabase(Hashtable<String,String> cmd) {

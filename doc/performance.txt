@@ -1,0 +1,42 @@
+v0.7.1 / mysql 5.1 / tomcat 6
+1. How long does it take to convert an object id found via Lucene into a
+cinnamon object that's ready for serialization?
+
+10:32:33.207 [http-8080-2] DEBUG server.data.Validator 477 - load OSD from database                                                                                         
+10:32:33.230 [http-8080-2] DEBUG server.data.Validator 479 - ...done                                                                                                        
+10:32:33.230 [http-8080-2] DEBUG server.data.Validator 354 - Looking up AclEntries                                                                                          
+10:32:33.230 [http-8080-2] DEBUG server.data.Validator 363 - descending into groupMatches2                                                                                  
+10:32:33.231 [http-8080-2] DEBUG server.data.Validator 399 - ACL does not have an EVERYONE-AclEntry.                                                                        
+10:32:33.231 [http-8080-2] DEBUG server.data.Validator 406 - object is not ownable                                                                                          
+10:32:33.231 [http-8080-2] DEBUG server.data.Validator 367 - checking all aclentries for permission                                                                         
+10:32:33.231 [http-8080-2] DEBUG server.data.Validator 369 - # of aclentries: 1                                                                                             
+10:32:33.231 [http-8080-2] DEBUG server.data.Validator 371 - check aclentry with id 2 for acl testacl0.5197980846649164 and group _2_foo                                    
+10:32:33.231 [http-8080-2] DEBUG server.AclEntry 125 - # of permissions in this aep: 3                                                                                      
+10:32:33.232 [http-8080-2] DEBUG server.AclEntry 128 - check Permission _browse_folder against _browse                                                                      
+10:32:33.232 [http-8080-2] DEBUG server.AclEntry 128 - check Permission _browse against _browse                                                                             
+10:32:33.232 [http-8080-2] DEBUG server.data.Validator 374 - Found aclentry with required permission. id=2                                                                  
+10:32:33.232 [http-8080-2] DEBUG server.data.Validator 485 - add 873 OSD to resultStore       
+
+total time: 25ms
+loading from database: 23ms
+
+2. How long does it take to serialze an object?
+10:32:35.517 [http-8080-2] DEBUG server.data.ObjectSystemData 796 - UserAsElementSection                                                                                    
+10:32:35.519 [http-8080-2] DEBUG server.data.ObjectSystemData 819 - FormatAsElement                                                                                         
+10:32:35.519 [http-8080-2] DEBUG server.data.ObjectSystemData 821 - ObjectTypeAsElement                                                                                     
+10:32:35.520 [http-8080-2] DEBUG server.data.ObjectSystemData 824 - nullChecks                                                                                              
+10:32:35.520 [http-8080-2] DEBUG server.data.ObjectSystemData 853 - languageSection
+
+total time: 3ms
+
+with postgresql as superuser:
+10:59:13.706 [http-8080-2] DEBUG server.data.Validator 477 - load OSD from database                                                                                         
+10:59:13.709 [http-8080-2] DEBUG server.data.Validator 479 - ...done                                                                                                        
+10:59:13.709 [http-8080-2] DEBUG server.data.Validator 351 - Superusers may do anything.                                                                                    
+10:59:13.709 [http-8080-2] DEBUG server.data.Validator 485 - add 342 OSD to resultStore
+loading from database: 3ms
+
+Convert & ACL check with mssql as normal user:
+loading time: 15ms
+total time: 1ms
+  

@@ -1,0 +1,60 @@
+<configuration>
+    <property name="logFolder" value="${CINNAMON_HOME_DIR}/cinnamon-system/global/log"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %L - %msg%n</Pattern>
+        </layout>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logFolder}/cinnamon.log</File>
+        <Append>true</Append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %L - %msg%n</Pattern>
+        </layout>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${logFolder}/${session}.%d{yyyy-MM-dd}.gz</FileNamePattern>
+            <!-- keep 30 days' worth of history -->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+
+    </appender>
+
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <!-- 
+      in the absence of the class attribute, it is assumed that the desired discriminator type 
+      is ch.qos.logback.classic.sift.MDCBasedDiscriminator -->
+        <discriminator>
+            <Key>session</Key>
+            <DefaultValue>unknown_session</DefaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE-${userid}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <File>${logFolder}/${session}.log</File>
+                <Append>true</Append>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <Pattern>%-4relative [%thread] %-5level %mdc %logger{35} %L - %msg%n</Pattern>
+                </layout>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <FileNamePattern>${logFolder}/${session}.%d{yyyy-MM-dd}.gz</FileNamePattern>
+                    <!-- keep 30 days' worth of history -->
+                    <MaxHistory>30</MaxHistory>
+                </rollingPolicy>
+            </appender>
+        </sift>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+    <logger name="org.mortbay.log" level="INFO"/>
+    <logger name="org.hibernate" level="INFO"/>
+    <logger name="server.global.ConfThreadLocal" level="DEBUG"/>
+    <logger name="server.CmdInterpreter" level="DEBUG"/>
+    <logger name="server.CmnServer" level="DEBUG"/>
+    <logger name="utils.HibernateSession" level="DEBUG"/>
+    <logger name="server.dao.UserDAOHibernate" level="DEBUG"/>
+    <logger name="org.hibernate.loader.entity.EntityLoader" level="INFO"/>
+    <logger name="server.HttpPostParser" level="DEBUG"/>
+
+</configuration>

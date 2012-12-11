@@ -1,0 +1,12 @@
+1,<metaset />,search,0,search 
+2,<metaset><cart_contents/></metaset>,cart,1,cart 
+3,<metaset />,translation_extension,0,translation_extension 
+4,<metaset />,render_input,0,render_input 
+5,<metaset />,render_output,0,render_output 
+6,<metaset />,test,0,test 
+7,<metaset />,tika,0,tika 
+8,<metaset />,translation_folder,0,translation_folder 
+9,<metaset />,translation_task,0,translation_task 
+10,<metaset />,task_definition,0,task_definition 
+11,<metaset />,workflow_template,0,workflow_template
+12,<metaset />,transition,0,transition

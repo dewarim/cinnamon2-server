@@ -1,0 +1,10 @@
+Current Dependencies:
+EntityLib
+Utils
+Workflow
+
+External:
+(see build.xml for a list of required libraries)
+
+to build:
+JDBC4 Postgresql Driver v9 (http://jdbc.postgresql.org)
