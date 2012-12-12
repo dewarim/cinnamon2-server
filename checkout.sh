@@ -29,3 +29,6 @@ git clone git@github.com:dewarim/cinnamon2-clientlib.git
 
 # cinnamon-demo-data: DITA demo dataset and configuration files for Cinnamon server.
 git clone git@github.com:dewarim/cinnamon-demo-data.git
+
+# Cinnamon2-Tools: Repository cleanup and conversion tools for Cinnamon.
+git clone git@github.com:dewarim/cinnamon2-tools.git
