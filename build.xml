@@ -12,131 +12,27 @@
 
     <property name="app.name" value="cinnamon"/>
     
-    <property environment="env"/>    
-    <property name="workspace.home" value="${env.CINNAMON2_SOURCE}"/>
-    <property name="lib.home" value="${env.JAVA_LIB_HOME}"/>
-    <property name="lib.groovy" value="${env.GRAILS_HOME}/lib/org.codehaus.groovy/groovy-all/jars/groovy-all-1.8.8.jar"/>
+    <property environment="env"/>
+    <!-- the build properties file expects you to set the following environment vars:
+        1. CINNAMON2_SOURCE: the path to the parent directory which contains the source directories of the modules. 
+        2. JAVA_LIB_HOME: the path to the directory which contains all required java libraries
+        3. GRAILS_HOME: the path to your Grails install, at least version 2.1.1 is required.
+    -->
+    <property file="cinnamon.build.properties"/>
     
+    <property name="java.source" value="1.7"/>
+    <property name="java.target" value="1.7"/>
+    <property name="java.compiler.args" value=""/>
+    
+    <!-- to build for Java 1.6 targets: 
     <property name="java.source" value="1.6"/>
     <property name="java.target" value="1.6"/>
-    <property name="java.bootstrap.path" value="/home/ingo/workspace2/oldJava/java-6-sun/jre/lib/rt.jar"/>
+    <property name="java.bootclasspath" value="/home/ingo/workspace2/oldJava/java-6-sun/jre/lib/rt.jar"/>
+    <property name="java.compiler.args" value="-Xbootclasspath/p:${java.bootclasspath}"/>
+    -->
     
-    <property name="dandelion.home" value="${workspace.home}/Dandelion"/>
-    <property name="dandelion.lib" value="${dandelion.home}/lib"/>
 
-    <property name="safran.home" value="${workspace.home}/CinnamonClient"/>
-    <property name="safran.src" value="${safran.home}/src"/>
-    <property name="safran.build" value="${safran.home}/build"/>
-    <property name="safran.build.classes" value="${safran.build}/classes"/>
-    <property name="safran.jar" value="${safran.home}/safran.jar"/>
-    <property name="safran.dandelion.jar" value="${dandelion.lib}/safran.mini.jar"/>
-
-    <property name="utils.home" value="${workspace.home}/CinnamonUtils"/>
-    <property name="utils.src" value="${utils.home}/src"/>
-    <property name="utils.build" value="${utils.home}/build"/>
-    <property name="utils.build.classes" value="${utils.build}/classes"/>
-    <property name="utils.jar" value="${utils.build}/utils.jar"/>
-
-    <property name="entitylib.home" value="${workspace.home}/EntityLib"/>
-    <property name="entitylib.src" value="${entitylib.home}/src"/>
-    <property name="entitylib.build" value="${entitylib.home}/build"/>
-    <property name="entitylib.build.classes" value="${entitylib.build}/classes"/>
-    <property name="entitylib.jar" value="${entitylib.build}/entitylib.jar"/>
-
-    <property name="server.home" value="${workspace.home}/Server"/>
-    <property name="server.src" value="${server.home}/src"/>
-    <property name="build.home" value="${server.home}/build"/>
-    <property name="web.home" value="${server.home}/web"/>
-    <property name="dist.home" value="${server.home}/target"/>
-    <property name="docs.home" value="${server.home}/doc"/>
-
-    <property name="cinnamonBase.home" value="${workspace.home}/CinnamonBase"/>
-    <property name="cinnamonBase.src" value="${cinnamonBase.home}/src"/>
-    <property name="cinnamonBase.build" value="${cinnamonBase.home}/build"/>
-    <property name="cinnamonBase.build.classes" value="${cinnamonBase.build}/classes"/>
-    <property name="cinnamonBase.jar" value="${cinnamonBase.build}/cinnamonBase.jar"/>
-
-    <property name="hibernate.home" value="${lib.home}/hibernate-distribution-3.6.8.Final"/>
-    <property name="hibernate.lib" value="${hibernate.home}/lib"/>
-    <property name="hibernate.lib.required" value="${hibernate.lib}/required"/>
-    <property name="hibernate.lib.optional" value="${hibernate.lib}/optional"/>
-    <property name="hibernate.lib.jpa" value="${hibernate.lib}/jpa/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
-
-    <property name="lib.servlet_api" value="${lib.home}/servlet-api-2.5.jar"/>
-    <!-- <property name="lib.servlet_api" value="${lib.home}/servlet-api-3.0.jar"/> -->
-
-    <property name="lib.testng.home" value="${lib.home}/testng-6.3"/>
-    <property name="lib.testng" value="${lib.testng.home}/testng-6.3.jar"/>
-    <property name="lib.commons.collections"
-              value="${lib.home}/commons-collections-3.2.1/commons-collections-3.2.1.jar"/>
-    <property name="lib.commons.httpclient.home" value="${lib.home}/commons-httpclient-3.1"/>
-    <property name="lib.commons.httpclient" value="${lib.commons.httpclient.home}/commons-httpclient-3.1.jar"/>
-    <property name="lib.commons.fileupload.path" value="${lib.home}/commons-fileupload-1.2.1/lib"/>
-    <property name="lib.commons.fileupload.name" value="commons-fileupload-1.2.1.jar"/>
-    <property name="lib.commons.fileupload" value="${lib.commons.fileupload.path}/${lib.commons.fileupload.name}"/>
-    <property name="lib.commons.logging.home" value="${lib.home}/commons-logging-1.1.1"/>
-    <property name="lib.commons.logging" value="${lib.commons.logging.home}/commons-logging-1.1.1.jar"/>
-    <property name="lib.commons.logging.api" value="${lib.commons.logging.home}/commons-logging-api-1.1.1.jar"/>
-    <property name="lib.commons.compress.home" value="${lib.home}/commons-compress-1.3"/>
-    <property name="lib.commons.compress" value="${lib.commons.compress.home}/commons-compress-1.3.jar"/>
-
-    <property name="lib.commons.io.home" value="${lib.home}/commons-io-2.1"/>
-    <property name="lib.commons.io" value="${lib.commons.io.home}/commons-io-2.1.jar"/>
-    <property name="lib.commons.codec.home" value="${lib.home}/commons-codec-1.5"/>
-    <property name="lib.commons.codec" value="${lib.commons.codec.home}/commons-codec-1.5.jar"/>
-
-    <!-- tika and dependencies (as far as they are not included elsewhere already) -->
-    <property name="lib.tika.core" value="${lib.home}/tika-core-1.1-SNAPSHOT.jar"/>
-    <property name="lib.tika.parsers" value="${lib.home}/tika-parsers-1.1-SNAPSHOT.jar"/>
-    <property name="lib.pdfbox" value="${lib.home}/pdfbox-1.6.0.jar"/>
-    <property name="lib.jempbox" value="${lib.home}/jempbox-1.6.0.jar"/>
-    <property name="lib.fontbox" value="${lib.home}/fontbox-1.6.0.jar"/>
-    <property name="lib.tagsoup" value="${lib.home}/tagsoup-1.2.1.jar"/>
-    <property name="lib.geronimo-stax-api" value="${lib.home}/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
-    <property name="lib.metadata-extractor" value="${lib.home}/metadata-extractor-2.4.0-beta-1.jar"/>
-    <property name="lib.poi" value="${lib.home}/poi-3.8-beta5/poi-3.8-beta5-20111217.jar"/>
-    <property name="lib.poi.ooxml" value="${lib.home}/poi-3.8-beta5/poi-ooxml-3.8-beta5-20111217.jar"/>
-    <property name="lib.poi.ooxml.schemas" value="${lib.home}/poi-3.8-beta5/poi-ooxml-schemas-3.8-beta5-20111217.jar"/>
-    <property name="lib.poi.scratchpad" value="${lib.home}/poi-3.8-beta5/poi-scratchpad-3.8-beta5-20111217.jar"/>
-    <property name="lib.xml-apis" value="${lib.home}/xml-commons-external-1.4.01/xml-apis.jar"/>
-    <property name="lib.asm" value="${lib.home}/asm-4.0/lib/asm-4.0.jar"/>
-    <property name="lib.xbean" value="${lib.home}/xmlbeans-2.5.0/lib/xbean.jar"/>
-    <property name="lib.xbean_xpath" value="${lib.home}/xmlbeans-2.5.0/lib/xbean_xpath.jar"/>
-    <property name="lib.xbean.resolver" value="${lib.home}/xmlbeans-2.5.0/lib/resolver.jar"/>
-    <property name="lib.xbean.xmlpublic" value="${lib.home}/xmlbeans-2.5.0/lib/xmlpublic.jar"/>
-    <property name="lib.xbean.jsr173_api" value="${lib.home}/xmlbeans-2.5.0/lib/jsr173_1.0_api.jar"/>
-    <property name="lib.xbean.qname" value="${lib.home}/xmlbeans-2.5.0/lib/xmlbeans-qname.jar"/>
-    <property name="lib.bouncyCastle" value="${lib.home}/crypto-146"/>
-    <property name="lib.bouncyCastle.provider" value="${lib.bouncyCastle}/jars/bcprov-jdk16-146.jar"/>
-    <property name="lib.bouncyCastle.bcmail" value="${lib.bouncyCastle}/jars/bcmail-jdk16-146.jar"/>
-    <property name="lib.icu4j" value="${lib.home}/icu4j-4_8_1_1.jar"/>
-    <property name="lib.boilerpipe" value="${lib.home}/boilerpipe-1.2.0/boilerpipe-1.2.0.jar"/>
-    <property name="lib.netcdf" value="${lib.home}/netcdf/netcdfAllNoSLF4J-4.2.jar"/>
-
-
-    <property name="lib.slf4j" value="${lib.home}/slf4j-1.6.4"/>
-    <property name="lib.slf4j.api" value="${lib.slf4j}/slf4j-api-1.6.4.jar"/>
-    <property name="lib.logback" value="${lib.home}/logback-1.0.0"/>
-    <property name="lib.logback.core" value="${lib.logback}/logback-core-1.0.0.jar"/>
-    <property name="lib.logback.classic" value="${lib.logback}/logback-classic-1.0.0.jar"/>
-    <property name="lib.dom4j.home" value="${lib.home}/dom4j-1.6.1"/>
-    <property name="lib.dom4j" value="${lib.dom4j.home}/dom4j-1.6.1.jar"/>
-    <property name="lib.jaxen" value="${lib.home}/jaxen-1.1.3/jaxen-1.1.3.jar"/>
-    <property name="lib.c3p0" value="${lib.home}/c3p0-0.9.1.2/lib/c3p0-0.9.1.2.jar"/>
-    <property name="lib.postgres" value="${lib.home}/postgresql-9.1-901.jdbc4.jar"/>
-    <property name="lib.xmlunit" value="${lib.home}/xmlunit-1.3/lib/xmlunit-1.3.jar"/>
-    <property name="lib.lucene.home" value="${lib.home}/lucene-3.5.0"/>
-    <property name="lib.lucene" value="${lib.lucene.home}/lucene-core-3.5.0.jar"/>
-    <property name="lib.lucene.xmlquery"
-              value="${lib.lucene.home}/contrib/xml-query-parser/lucene-xml-query-parser-3.5.0.jar"/>
-    <property name="lib.lucene.regex" value="${lib.lucene.home}/contrib/queries/lucene-queries-3.5.0.jar"/>
-    <property name="lib.jtds.home" value="${lib.home}/jtds-1.2.5"/>
-    <property name="lib.jtds" value="${lib.home}/jtds-1.2.5/jtds-1.2.5.jar"/>
-    <property name="lib.mysql" value="${lib.home}/mysql-connector-java-5.1.18/mysql-connector-java-5.1.18-bin.jar"/>
-    <property name="lib.javamail" value="${lib.home}/javamail-1.4.4/mail.jar"/>
-    <property name="lib.velocity" value="${lib.home}/velocity-1.7/velocity-1.7.jar"/>
-    <property name="lib.velocity.dep" value="${lib.home}/velocity-1.7/velocity-1.7-dep.jar"/>    
-
+    
     <property name="compile.debug" value="true"/>
     <path id="compile.classpath">
         <pathelement location="${hibernate.home}/hibernate3.jar"/>
@@ -374,8 +270,8 @@ target: compile.utils
         <javac srcdir="${utils.src}"
                destdir="${utils.build.classes}"
                source="${java.source}" target="${java.target}"
-               bootclasspath="${java.bootstrap.path}"
                debug="${compile.debug}" includeantruntime="false">
+            <compilerarg value="${java.compiler.args}" compiler="javac1.6"/>
             <classpath>
                 <path refid="compile.classpath"/>
                 <pathelement location="${cinnamonBase.jar}"/>
@@ -400,8 +296,8 @@ target: compile.utils
         <javac srcdir="${cinnamonBase.src}"
                destdir="${cinnamonBase.build.classes}"
                source="${java.source}" target="${java.target}"
-               bootclasspath="${java.bootstrap.path}"
                debug="${compile.debug}" includeantruntime="false">
+            <compilerarg value="${java.compiler.args}" compiler="javac1.6"/>
             <classpath>
                 <path refid="compile.classpath"/>
             </classpath>
@@ -423,8 +319,8 @@ target: compile.entitylib
         <javac srcdir="${entitylib.src}"
                destdir="${entitylib.build.classes}"
                source="${java.source}" target="${java.target}"
-               bootclasspath="${java.bootstrap.path}"
                debug="${compile.debug}" includeantruntime="false">
+            <compilerarg value="${java.compiler.args}" compiler="javac1.6"/>
             <classpath>
                 <path refid="compile.classpath"/>
                 <pathelement location="${utils.jar}"/>
@@ -484,7 +380,7 @@ target: compile.entitylib
     <!-- =================================
     target: compile
    ================================= -->
-    <target name="compile" depends="compile.base, compile.utils, compile.entitylib" description="Compile Java sources">
+    <target name="compile" depends="clean, prepare, compile.base, compile.utils, compile.entitylib" description="Compile Java sources">
 
         <!-- copy libs -->
         <copy todir="${build.home}/WEB-INF/lib" file="${utils.jar}"/>
@@ -495,8 +391,8 @@ target: compile.entitylib
         <javac srcdir="${server.src}"
                destdir="${build.home}/WEB-INF/classes"
                source="${java.source}" target="${java.target}"
-               bootclasspath="${java.bootstrap.path}"
                debug="${compile.debug}" includeantruntime="false">
+            <compilerarg value="${java.compiler.args}" compiler="javac1.6"/>
             <sourcepath>
                 <pathelement location="${utils.src}"/>
             </sourcepath>
