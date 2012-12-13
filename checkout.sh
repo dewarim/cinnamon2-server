@@ -1,4 +1,4 @@
-# clone all git repositories of Cinnamon Server v2 from Github.
+echo "Clone all git repositories of Cinnamon Server v2 from Github."
   
 # Renderserver: fetch tasks from a repository, execute them and upload the results.
 git clone git@github.com:dewarim/cinnamon2-renderserver.git
@@ -32,3 +32,10 @@ git clone git@github.com:dewarim/cinnamon2-demo-data.git
 
 # Cinnamon2-Tools: Repository cleanup and conversion tools for Cinnamon.
 git clone git@github.com:dewarim/cinnamon2-tools.git
+
+echo "Finished cloning git repositories."
+echo "To download the depenencies, use: 'wget http://download.horner-code.de/cinnamon/cinnamon-dependencies-2.4.1.zip'"
+echo "Do not forget to set the environment variables:
+    1. CINNAMON2_SOURCE: the path to this directory. 
+    2. JAVA_LIB_HOME: the path to the directory which contains the unpacked dependencies-zip
+    3. GRAILS_HOME: the path to your Grails install, at least version 2.1.1 is required for the Grails based modules."
