@@ -353,9 +353,9 @@ target: compile.entitylib
        target in case the developer wants to create Javadocs independently.
 
      -->
-    <target name="javadoc" depends="compile" description="Create Javadoc API documentation">
-        <mkdir dir="doc/api"/>
-        <javadoc destdir="doc/api" packagenames="*" private="true">
+    <target name="javadoc" description="Create Javadoc API documentation">
+        <mkdir dir="${server.home}/doc/api"/>
+        <javadoc destdir="${server.home}/doc/api" packagenames="*" private="true">
             <fileset dir="${server.src}" defaultexcludes="yes"/>
             <fileset dir="${entitylib.src}" defaultexcludes="yes"/>
             <fileset dir="${utils.src}" defaultexcludes="yes"/>
@@ -380,7 +380,7 @@ target: compile.entitylib
     <!-- =================================
     target: compile
    ================================= -->
-    <target name="compile" depends="clean, prepare, compile.base, compile.utils, compile.entitylib" description="Compile Java sources">
+    <target name="compile" depends="compile.base, compile.utils, compile.entitylib" description="Compile Java sources">
 
         <!-- copy libs -->
         <copy todir="${build.home}/WEB-INF/lib" file="${utils.jar}"/>
@@ -433,11 +433,11 @@ target: compile.entitylib
  //disabled - is only needed for public dist. * "javadoc" so that the application Javadocs will have been created
 
      -->
-    <target name="dist" depends="compile, versionInfo" description="Create binary distribution">
+    <target name="dist" depends="clean, prepare, usePostgres, compile, versionInfo" description="Create binary distribution">
         <!-- Copy documentation subdirectories -->
-        <mkdir dir="doc/docs/api"/>
-        <copy todir="${dist.home}/docs/api">
-            <fileset dir="doc/api"/>
+        <mkdir dir="${dist.home}/doc/api"/>
+        <copy todir="${dist.home}/doc/api">
+            <fileset dir="${server.home}/doc/api"/>
         </copy>
         <!-- Create application WAR file -->
         <jar destfile="${dist.home}/${app.name}.war" basedir="${build.home}"
