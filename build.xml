@@ -454,8 +454,17 @@ target: compile.entitylib
         </jar>
     </target>
     
-    <target name="dist_mssql2008" depends="clean, prepare, useMSSQL2008, compile, dist"
+    <target name="dist_mssql2008" depends="clean, prepare, useMSSQL2008, compile, versionInfo"
             description="create public version for MSSQL-2008 dependencies.">
+        <!-- Copy documentation subdirectories -->
+        <mkdir dir="${dist.home}/doc/api"/>
+        <copy todir="${dist.home}/doc/api">
+            <fileset dir="${server.home}/doc/api"/>
+        </copy>
+        <!-- Create application WAR file -->
+        <jar destfile="${dist.home}/${app.name}.war" basedir="${build.home}"
+             excludes="**/slf4j-api-1.5.2* **/slf4j-api.jar **/javassist.jar **/dom4j.jar **/jta.jar"
+                />
     </target>
 
     <target name="makeFullJar" depends="dist" description="create cinnamon.jar with all dependencies">
