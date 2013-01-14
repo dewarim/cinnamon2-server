@@ -155,7 +155,7 @@ public class LinkApi extends BaseExtension {
      * Most parameters are optional [...], but you must include at least one of them,
      * otherwise this method will do nothing.
      * <ul>
-     * <li>command=updateLink</li>
+     * <li>command=updatelink</li>
      * <li>link_id= if of the link object </li>
      * <li>[acl_id]= new acl id for the link</li>
      * <li>[owner_id]= new owner for the link</li>
@@ -238,7 +238,7 @@ public class LinkApi extends BaseExtension {
      * otherwise this method will do nothing.
      * <ul>
      * <li>command=getlink</li>
-     * <li>link_id= if of the link object </li>
+     * <li>link_id= id of the link object </li>
      * <li>ticket=session ticket</li>
      * </ul>
      * <h2>Needed permissions</h2>
@@ -311,7 +311,7 @@ public class LinkApi extends BaseExtension {
      * <h2>Parameters in HTTP Request</h2>
      * <ul>
      * <li>command=deletelink</li>
-     * <li>link_id= if of the link object </li>
+     * <li>link_id= id of the link object </li>
      * <li>ticket=session ticket</li>
      * </ul>
      * <h2>Needed permissions</h2>
