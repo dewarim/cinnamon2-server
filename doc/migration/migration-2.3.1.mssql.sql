@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[links](
 	[acl_id] [bigint] NOT NULL,
 	[folder_id] [bigint] NULL,
 	[osd_id] [bigint] NULL,
+  [version] [bigint] default 0,
  CONSTRAINT [PK_links] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

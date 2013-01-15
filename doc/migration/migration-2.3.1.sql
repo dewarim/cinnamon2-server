@@ -15,6 +15,7 @@ CREATE TABLE links
   parent_id bigint NOT NULL,
   folder_id bigint,
   osd_id bigint,
+  version bigint,
   CONSTRAINT links_pk PRIMARY KEY (id ),
   CONSTRAINT links_folder_id_fk FOREIGN KEY (folder_id)
       REFERENCES folders (id) MATCH SIMPLE
