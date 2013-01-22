@@ -8,7 +8,6 @@
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
-
         <class>server.data.ObjectSystemData</class>
         <class>server.Acl</class>
         <class>server.AclEntry</class>
