@@ -474,6 +474,7 @@ target: compile.entitylib
             <zipgroupfileset dir="${build.home}/WEB-INF/lib/">
                 <include name="**/*.jar"/>
             </zipgroupfileset>
+            <metainf dir="${server.home}/META-INF" includes="**/persistence.xml" />
             <include name="**/*.class"/>
             <manifest>
                 <attribute name="Main-Class" value="server.MailSender"/>
