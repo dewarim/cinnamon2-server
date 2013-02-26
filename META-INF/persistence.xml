@@ -51,9 +51,9 @@
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="false"/>
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
-            <property name="hibernate.jdbc.use_streams_for_binary" value="false"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+            <property name="hibernate.connection.driver_class" value="net.sourceforge.jtds.jdbc.Driver"/>
+            <property name="hibernate.jdbc.use_streams_for_binary" value="true"/>
             <property name="hibernate.connection.release_mode" value="auto"/>
             <property name="hibernate.c3p0.min_size" value="3"/>  <!-- c3p0.minPoolSize -->
             <property name="hibernate.c3p0.max_size" value="250"/> <!--c3p0.maxPoolSize -->
@@ -115,8 +115,8 @@
             <property name="hibernate.hbm2ddl.auto" value="create"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="false"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+            <property name="hibernate.connection.driver_class" value="net.sourceforge.jtds.jdbc.Driver"/>
             <property name="hibernate.connection.release_mode" value="after_transaction"/>
             <property name="hibernate.c3p0.min_size" value="10"/>
             <property name="hibernate.c3p0.max_size" value="150"/>
