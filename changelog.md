@@ -1,5 +1,12 @@
 # Cinnamon server changelog
- 
+
+## 2.4.2
+
++ Refactored latestHead/latestBranch in Translation and ObjectTreeCopier
++ Fixed OSD content deletion problem (after object was deleted in the database,
+  it was possible for old files to stick around in the file system).
++ Improved documentation.
+
 ## 2.4.1
 
 + Improved build.xml, refactored ant build properties into their own file.
@@ -15,12 +22,12 @@
 * Postgres JDBC driver 9.1-902 to 9.2-1002
 * Javamail 1.4.4 to 1.4.5
 * Commons-Codec 1.5 to 1.7
- 
+
 ## 2.4.0
 
 + Moved to git as the new VCS.
 + New: LinkApi - create references to objects and folders.
-  Database changes: add a table 'links' to your repositories, see doc/migration-2.3.1.sql on how to do this with Postgres.     
+  Database changes: add a table 'links' to your repositories, see doc/migration-2.3.1.sql on how to do this with Postgres.
 
 ## 2.3.0
 

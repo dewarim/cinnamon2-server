@@ -183,29 +183,20 @@ public class Translation extends BaseExtension {
                 addTranslationMetadata(targetNode, objectRelationType, attribute_value);
                 relDao.findOrCreateRelation(objectRelationType, source, targetNode, "");
 
-                // set latestHead on new node
-                ObjectSystemData predecessor = targetNode.getPredecessor();
                 ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
-                Boolean hasChildren = oDao.findAllByPredecessorID(targetNode).size() > 0;
-                if (predecessor == null) {
-                    log.debug("osd " + targetNode.getName() + " v" + targetNode.getVersion() + " has no predecessor; hasChildren=" + hasChildren);
-                    // if it has no predecessor and no children,
-                    // it is the first version and therefore latestHead and latestBranch.
-                    targetNode.setLatestHead(!hasChildren);
-                    targetNode.setLatestBranch(!hasChildren);
-                } else {
-                    log.debug("osd " + targetNode.getName() + " v" + targetNode.getVersion() + " has predecessor; hasChildren=" + hasChildren);
-                    // 1. targetNode must be newer on branch than predecessor:
-                    predecessor.setLatestBranch(false);
-                    // 2. if targetNode has no children, it is latestBranch.
-                    targetNode.setLatestBranch(!hasChildren);
-                    // 3. if targetNode's version is a simple number (that is, not on a branch)
-                    //    and it has no children, it is also latestHead
-                    Boolean inHead = targetNode.getVersion().matches("^\\d+$");
-                    log.debug("osd is in Head:" + inHead);
-                    if (inHead) {
-                        predecessor.setLatestHead(false);
-                    }
+                List<ObjectSystemData> children = oDao.findAllByPredecessorID(targetNode);
+                ObjectSystemData.fixLatestHeadAndBranch(targetNode, children);
+
+                log.debug("fixLatestHeadAndBranch:" +
+                        String.format("target: %d is latestHead %s / branch: %s", targetNode.getId(),
+                                targetNode.getLatestHead().toString(),
+                                targetNode.getLatestBranch().toString()));
+                ObjectSystemData predecessor = targetNode.getPredecessor();
+                if (predecessor != null) {
+                    log.debug("fixLatestHeadAndBranch:" +
+                            String.format("predecessor: %d is latestHead: %s / branch: %s", predecessor.getId(),
+                                    predecessor.getLatestHead().toString(),
+                                    predecessor.getLatestBranch().toString()));
                 }
             } else {
                 throw new CinnamonException("error.translation_exists");
