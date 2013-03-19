@@ -106,7 +106,7 @@ public class Translation extends BaseExtension {
      *            <ul>
      *            <li>attribute = XPath expression to find a specific attribute node.</li>
      *            <li>attribute_value = The required value of the attribute node.</li>
-     *            <li>src_id = the source object which will be translated.</li>
+     *            <li>source_id = the source object which will be translated.</li>
      *            <li>object_relation_type_id = the type of the object relation which will be created
      *            between the source object and the translated object.</li>
      *            <li>root_relation_type_id = the type of relation by which the existence of a
@@ -517,7 +517,7 @@ public class Translation extends BaseExtension {
      *            <ul>
      *            <li>attribute = XPath expression to find a specific attribute node.</li>
      *            <li>attribute_value = The required value of the attribute node.</li>
-     *            <li>src_id = the source object which will be translated.</li>
+     *            <li>source_id = the source object which will be translated.</li>
      *            <li>object_relation_type_id = the type of the object relation which will be created
      *            between the source object and the translated object.</li>
      *            <li>root_relation_type_id = the type of relation by which the existence of a
