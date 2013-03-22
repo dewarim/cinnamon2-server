@@ -717,7 +717,7 @@ public class Initializer extends BaseExtension {
     public void createMetasetTypes(){
         log.debug("create metaset types");
         MetasetTypeDAO mtDao = daoFactory.getMetasetTypeDAO(em);
-        String[] metasetNames = {"search", "cart", "translation_extension", "render_input", "render_output", "test", "tika"};
+        String[] metasetNames = {"search", "cart", "translation_extension", "render_input", "render_output", "test", "tika", "task_definition", "transition"};
         for(String name : metasetNames){
             MetasetType metasetType = new MetasetType(name, name, null);
             mtDao.makePersistent(metasetType);
