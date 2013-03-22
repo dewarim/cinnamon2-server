@@ -1,4 +1,4 @@
-package workflow.transition.test;
+package workflow.transition;
 
 import java.io.IOException;
 import java.util.List;
