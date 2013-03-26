@@ -73,6 +73,7 @@ public abstract class BaseTransition implements Transition {
         return folder;
     }
 
+    // TODO: remove repositoryName parameter
     public ObjectSystemData createTask(String name, User owner, String repositoryName) {
         FolderDAO folderDao = daoFactory.getFolderDAO(em);
         Folder taskDefFolder = folderDao.findByPath(Constants.WORKFLOW_TASK_DEFINITION_PATH);
@@ -100,6 +101,7 @@ public abstract class BaseTransition implements Transition {
         task.setOwner(owner);
         task.setProcstate(Constants.PROCSTATE_TASK_TODO);
         task.setType(taskType);
+        task.setIndexOk(null);
         osdDao.makePersistent(task);
 
         // copy content of task
