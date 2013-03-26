@@ -1,6 +1,5 @@
 package server.extension;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class WorkflowApi extends BaseExtension{
 		 * x fetch the task folder
 		 * x fetch object types
 		 * x copy template to workflow folder (= new workflow object)
-		 * x copy start_task definiton to task folder (= new task object)
+		 * x copy start_task definition to task folder (= new task object)
 		 * x set procstate of start_task to todo
 		 * x create relation between workflow and task
 		 * x index new workflow
