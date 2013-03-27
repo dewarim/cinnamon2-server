@@ -60,7 +60,7 @@ public class WorkflowApi extends BaseExtension{
 	 * Create a new Workflow. User must have CREATE_INSTANCE-Permission.
 	 * @return
 	 * {@code
-	 * 	<workflow>$id of workflow OSD</workflow>
+	 * 	<workflowId>$id of workflow OSD</workflowId>
 	 * }
 	 * <h2>Parameters in HTTP Request</h2>
 	 * <ul>
