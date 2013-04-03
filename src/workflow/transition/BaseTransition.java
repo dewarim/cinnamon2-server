@@ -1,6 +1,5 @@
 package workflow.transition;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -101,7 +100,7 @@ public abstract class BaseTransition implements Transition {
         task.setOwner(owner);
         task.setProcstate(Constants.PROCSTATE_TASK_TODO);
         task.setType(taskType);
-        task.setIndexOk(null);
+        task.updateIndex();
         osdDao.makePersistent(task);
 
         // copy content of task

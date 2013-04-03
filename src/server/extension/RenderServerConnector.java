@@ -11,8 +11,6 @@ import server.dao.*;
 import server.data.ObjectSystemData;
 import server.data.Validator;
 import server.exceptions.CinnamonConfigurationException;
-import server.exceptions.CinnamonException;
-import server.global.Conf;
 import server.global.Constants;
 import server.interfaces.CommandRegistry;
 import server.interfaces.Response;
@@ -20,9 +18,6 @@ import server.lifecycle.LifeCycle;
 import server.response.XmlResponse;
 import utils.ParamParser;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 public class RenderServerConnector extends BaseExtension {
@@ -127,8 +122,7 @@ public class RenderServerConnector extends BaseExtension {
         osd.setType(renderTaskType);
         ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
         oDao.makePersistent(osd);
-
-		repository.getLuceneBridge().addObjectToIndex(osd);
+        osd.updateIndex();
 
         // create response
         XmlResponse resp = new XmlResponse(res);

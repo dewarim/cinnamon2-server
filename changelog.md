@@ -1,5 +1,11 @@
 # Cinnamon server changelog
 
+## 2.4.3
+
+* Fixed: predecessor OSD is indexed correctly if its latestHead/lastestBranch flag changes.
+* Changed Lucene indexing from synchronous to asynchronous to prevent possible discrepancies between database-state after rollback and committed index updates.
+	You must make sure that the IndexServer is running and has not a too large sleep time between two index runs (see configuration documentation on http://cinnamon-cms.de).
+	
 ## 2.4.2
 
 + Refactored latestHead/latestBranch in Translation and ObjectTreeCopier

@@ -669,8 +669,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         osdDao.makePersistent(osd);
 
         new MetasetService().initializeMetasets(osd,(String) cmd.get("metasets"));
-
-        repository.getLuceneBridge().addObjectToIndex(osd);
+        osd.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(osd.getId()));
@@ -799,10 +798,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             copy.getState().enterState(copy, copy.getState());
         }
 
-        // metaset is already copied in createClone.
-//        new MetasetService().copyMetasets(osd, copy, cmd.get("metasets"));
-
-        repository.getLuceneBridge().addObjectToIndex(copy);
+        copy.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(copy.getId()));
@@ -866,7 +862,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         log.debug("copy complete - now adding new folders to Lucene.");
         for (Long id : copyResult.getNewFolders()) {
             Folder f = folderDao.get(id);
-            repository.getLuceneBridge().addObjectToIndex(f);
+            f.updateIndex();
         }
         log.debug("folders have been added; now submitting new objects to Lucene");
         ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
@@ -875,7 +871,9 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             if (o == null) {
                 log.error("no object found with id " + id);
             }
-            repository.getLuceneBridge().addObjectToIndex(o);
+            else{
+                o.updateIndex();
+            }
         }
 
         log.debug("objects have been indexed.");
@@ -953,8 +951,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
                 log.debug("current object id after persists_relation: {} ", clone.getId());
                 log.debug("relation-id: {}", relCopy.getId());
             }
-
-            repository.getLuceneBridge().addObjectToIndex(clone);
+            clone.updateIndex();
         }
 
 
@@ -1011,8 +1008,8 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         folderDao.makePersistent(folder);
         log.debug("repository: " + repository.getName());
-        repository.getLuceneBridge().addObjectToIndex(folder);
-
+        folder.updateIndex();
+        
         log.debug("CreateFolderId: " + folder.getId());
         XmlResponse resp = new XmlResponse(res);
         Element root = resp.getDoc().addElement("folders");
@@ -1533,13 +1530,13 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             osdDao.delete(id);
         } catch (Exception e) {
             // delete failed, so we re-add the object to the index:            
-            lucene.addObjectToIndex(osd);
+            osd.updateIndex();
             throw new CinnamonException(e);
         }
 
         if (preOsd != null) {
             log.debug("update predecessor "+preOsd.getId()+" after delete object");
-            lucene.updateObjectInIndex(preOsd);
+            preOsd.updateIndex();
         }
 
         XmlResponse resp = new XmlResponse(res);
@@ -1588,7 +1585,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             log.debug("Trying to delete: " + o.getId());
             osdDao.delete(o.getId());
             em.flush();
-            // TODO: only remove from index once all objects have been deleted successfully.
             LuceneBridge lucene = repository.getLuceneBridge();
             lucene.removeObjectFromIndex(o);
         }
@@ -2550,7 +2546,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         osd.setMetadata(metadata);
         osd.updateAccess(getUser());
-        repository.getLuceneBridge().updateObjectInIndex(osd);
+        osd.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         Element root = resp.getDoc().addElement("cinnamon");
@@ -2715,7 +2711,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             osd.setAcl(acl);
         }
         osd.updateAccess(getUser());
-        repository.getLuceneBridge().updateObjectInIndex(osd);
+        osd.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.set.sys_meta");
@@ -2745,7 +2741,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         (new Validator(user)).validateLock(osd, user);
         User user = getUser();
         osd.setLocked_by(user);
-        repository.getLuceneBridge().updateObjectInIndex(osd);
+        osd.updateIndex();
         log.debug("lock - done.");
 
         XmlResponse resp = new XmlResponse(res);
@@ -2775,7 +2771,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         (new Validator(user)).validateUnlock(osd);
         osd.setLocked_by(null);
         log.debug("before sync");
-        repository.getLuceneBridge().updateObjectInIndex(osd);
+        osd.updateIndex();
         log.debug("unlock - done");
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.object.unlock");
@@ -2831,7 +2827,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             new TikaParser().parse(osd, repository.getName());
         }
         osd.updateAccess(getUser());
-        repository.getLuceneBridge().updateObjectInIndex(osd);
+        osd.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.set.content");
@@ -2902,11 +2898,10 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         if (osd.getState() != null) {
             osd.getState().enterState(osd, osd.getState());
         }
-//        new MetasetService().copyMetasets(pre, osd, (String) cmd.get("metasets"));
 
         log.debug("index new object");
-        repository.getLuceneBridge().updateObjectInIndex(pre); // update old obj: no longer latestHead
-        repository.getLuceneBridge().addObjectToIndex(osd);
+        pre.updateIndex();
+        osd.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(osd.getId()));
@@ -2965,8 +2960,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         (new Validator(user)).validateUpdateFolder(cmd, folder);
         folder = folderDao.update(id, cmd);
-
-        repository.getLuceneBridge().updateObjectInIndex(folder);
+        folder.updateIndex();
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.update.folder");
         return resp;
@@ -3735,7 +3729,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             }
             ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
             oDao.makePersistent(osd);
-            repository.getLuceneBridge().addObjectToIndex(osd);
+            osd.updateIndex();
             XmlResponse resp = new XmlResponse(res);
             resp.addTextNode("objectId", String.valueOf(osd.getId()));
             return resp;
@@ -4013,8 +4007,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         MetasetService metasetService = new MetasetService();
         Metaset metaset = metasetService.createOrUpdateMetaset(metasetOwner, metasetType, cmd.get("content"), writePolicy);
-
-        repository.getLuceneBridge().addObjectToIndex(metasetOwner);
+        metasetOwner.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.getDoc().add(Metaset.asElement("meta",metaset));
@@ -4075,7 +4068,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         }
 
         metasetOwner.addMetaset(metaset);
-        repository.getLuceneBridge().updateObjectInIndex(metasetOwner);
+        metasetOwner.updateIndex();
 
         return new XmlResponse(res, "<success>success.link.metaset</success>");
     }
@@ -4134,7 +4127,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         }
 
         new MetasetService().unlinkMetaset(metasetOwner, metaset);
-        repository.getLuceneBridge().updateObjectInIndex(metasetOwner);
+        metasetOwner.updateIndex();
 
         return new XmlResponse(res, "<success>success.link.metaset</success>");
     }
@@ -4200,7 +4193,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         MetasetService metasetService =  new MetasetService();
         Collection<IMetasetOwner> affectedItems = metasetService.deleteMetaset(metasetOwner, metasetType, validator, deletePolicy);
         for(IMetasetOwner exOwner : affectedItems){
-            repository.getLuceneBridge().updateObjectInIndex(exOwner);
+            exOwner.updateIndex();
         }
 
         return new XmlResponse(res, "<success>success.link.metaset</success>");

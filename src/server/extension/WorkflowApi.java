@@ -133,10 +133,8 @@ public class WorkflowApi extends BaseExtension{
 
 		log.debug("Indexing new workflow and start task");
 
-		// index new workflow and start task:
-		LuceneBridge lucene = repository.getLuceneBridge();
-		lucene.addObjectToIndex(workflow);
-		lucene.addObjectToIndex(startTask);
+        workflow.updateIndex();
+        startTask.updateIndex();
 
 		XmlResponse resp = new XmlResponse(res);
 		resp.addTextNode("workflowId", String.valueOf(workflow.getId()));
@@ -380,15 +378,12 @@ public class WorkflowApi extends BaseExtension{
 			}
 		}
 		
-		// index new tasks with Lucene:
-		log.debug("updating Lucene index");
-		LuceneBridge lucene = repository.getLuceneBridge();
-		lucene.updateObjectInIndex(task);
+        task.updateIndex();
 		for(ObjectSystemData aTask : newTasks){
-			lucene.addObjectToIndex(aTask);
+            aTask.updateIndex();
 		}
 		if(workflow.getProcstate().equals(Constants.PROCSTATE_WORKFLOW_FINISHED)){
-			lucene.updateObjectInIndex(workflow);
+            workflow.updateIndex();
 		}
 	}
 }
