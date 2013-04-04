@@ -2315,7 +2315,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         else{
             configEntry.setConfig(config.asXML());
         }
-        return new XmlResponse(res, "<configEntryId>"+configEntry.getId()+"<configEntryId>");
+        return new XmlResponse(res, "<configEntryId>"+configEntry.getId()+"</configEntryId>");
     }
 
     /**
