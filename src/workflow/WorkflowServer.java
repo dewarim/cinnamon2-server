@@ -6,11 +6,13 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
 
+import org.dom4j.Document;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import server.Metaset;
 import server.ObjectType;
 import server.Relation;
 import server.RelationType;
@@ -20,13 +22,13 @@ import server.exceptions.CinnamonException;
 import server.extension.WorkflowApi;
 import server.global.ConfThreadLocal;
 import server.global.Constants;
-import server.i18n.Language;
 import server.i18n.LocalMessage;
 import server.i18n.UiLanguage;
 import server.index.LuceneBridge;
 import server.index.ResultCollector;
 import server.interfaces.Repository;
 import utils.HibernateSession;
+import utils.ParamParser;
 
 public class WorkflowServer implements Runnable {
 
@@ -197,14 +199,38 @@ public class WorkflowServer implements Runnable {
 	void tryAndExecuteTransitions(WorkflowApi wfApi, Collection<ObjectSystemData> tasks, String transitionXpath){
 		for(ObjectSystemData task : tasks){
 			try{
-				wfApi.executeTransition(task, transitionXpath );
+				wfApi.executeTransition(task, transitionXpath);
 			}
-			catch (Exception e) {
+			catch (Exception e) {                
 				log.error("Failed to execute Transition",e);
+                publishStacktrace(task, e, Constants.METASET_LOG, Constants.PROCSTATE_TRANSITION_FAILED);
 			}
 		}
 	}
 	
+    void publishStacktrace(ObjectSystemData task, Exception e, String metasetName, String procstate){
+        StringBuilder trace = new StringBuilder();
+        Throwable cause = e;
+        while (cause != null) {
+            trace.append(cause.toString());
+            for (StackTraceElement ste : cause.getStackTrace()) {
+                trace.append("\n  ");
+                trace.append(ste);
+            }
+            trace.append('\n');
+            cause = cause.getCause();
+        }
+        Document errorDoc = ParamParser.parseXmlToDocument("<error timestamp='" + new Date().toString() + "'/>");
+        errorDoc.getRootElement().addText(trace.toString());
+        Metaset metaset = task.fetchMetaset(metasetName, true); 
+        String meta = metaset.getContent();
+        Document metaDoc = ParamParser.parseXmlToDocument(meta);
+        Element metasetElement = metaDoc.getRootElement();
+        metasetElement.add(errorDoc.getRootElement().detach());
+        metaset.setContent(metaDoc.asXML());
+        task.setProcstate(procstate);
+    }
+    
 	void checkWorkflowDeadlines(WorkflowApi wfApi){
 		/* 
 		 * search for workflows that have reached their deadline
