@@ -14,3 +14,5 @@ lib/**
 build/**
 bin/**
 doc/api/**
+META-INF/persistence.xml
+
