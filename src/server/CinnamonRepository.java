@@ -51,14 +51,13 @@ public class CinnamonRepository implements Repository{
 	public CinnamonRepository(String name){
 
         this.name = name;
-        ConfThreadLocal conf = ConfThreadLocal.getConf();
-		String persistence_unit = conf.getPersistenceUnit(name);
-		String url = conf.getDatabaseConnectionURL(name);
 
-        // create Hibernate EntityManagers:
-		hibernateSession = new HibernateSession(conf,name, conf.getPersistenceUnit(name ));
+        ConfThreadLocal conf = ConfThreadLocal.getConf();
+        hibernateSession = createHibernateSession();      
 
         log.debug("Loading custom connections for repository " + name);
+        String persistence_unit = conf.getPersistenceUnit(name);
+        String url = conf.getDatabaseConnectionURL(name);
         PersistenceSessionProvider psp = new DefaultPersistenceSessionProvider(name, persistence_unit, url);
         Query q = HibernateSession.getRepositoryEntityManager(psp).createNamedQuery("selectAllCustomTables");
 
@@ -76,7 +75,7 @@ public class CinnamonRepository implements Repository{
 		// delete all old sessions:
 		purgeSessionTable(em);
 		
-		this.indexServer = new IndexServer(lucene, em, this);
+		this.indexServer = new IndexServer(lucene, this);
 		this.indexServerThread = new Thread(indexServer);
 		this.workflowServer = new WorkflowServer(this);
 		this.workflowServerThread = new Thread(workflowServer);
@@ -90,7 +89,12 @@ public class CinnamonRepository implements Repository{
             new AutoInstaller().initializeBasicSystem(this);
         }
 	}
-
+    
+    public HibernateSession createHibernateSession(){
+        ConfThreadLocal conf = ConfThreadLocal.getConf();
+        return new HibernateSession(conf, name, conf.getPersistenceUnit(name ));        
+    }
+    
     public void initializeCustomPersistenceUnit(){
         ConfThreadLocal conf = ConfThreadLocal.getConf();
         // configure custom-persistence-units, if necessary:

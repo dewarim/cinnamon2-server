@@ -3312,18 +3312,17 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
     }
 
     /**
-     * The reindex command updates the index on all objects or folders.
-     *
+     * The reindex command updates the index on all objects and folders.
+     * Note: this is currently not optimized for performance - it may take a long time.
      * @param cmd HTTP request parameter map:
      *            <ul>
      *            <li>command=reindex</li>
-     *            <li>target="folders" or "objects"</li>
      *            <li>ticket=session ticket</li>
      *            </ul>
      * @return XML-Response: number of affected items.
      *         <pre>
      *          {@code
-     *           <reindexResult>665</reindexResult>
+     *           <success>success.reindex</success>
      *          }
      *         </pre>
      */
@@ -3333,20 +3332,12 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             throw new CinnamonException("error.must_be_admin");
         }
         String target = cmd.get("target");
-        Integer items = 0;
-        if (target == null) {
-            throw new CinnamonException("error.param.target");
-        } else if (target.equals("folders")) {
-            FolderDAO folderDAO = daoFactory.getFolderDAO(em);
-            items = folderDAO.prepareReIndex();
-        } else if (target.equals("objects")) {
-            ObjectSystemDataDAO osdDao = daoFactory.getObjectSystemDataDAO(em);
-            items = osdDao.prepareReIndex();
-        }
+        FolderDAO folderDAO = daoFactory.getFolderDAO(em);
+        folderDAO.prepareReIndex();
 
         XmlResponse resp = new XmlResponse(res);
         Document response = resp.getDoc();
-        response.addElement("reindexResult").addText(items.toString());
+        response.getRootElement().addElement("success").addText("success.reindex");
         return resp;
     }
 

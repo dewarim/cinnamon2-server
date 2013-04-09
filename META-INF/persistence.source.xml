@@ -20,9 +20,10 @@
         <class>server.FolderType</class>
         <class>server.Group</class>
         <class>server.GroupUser</class>
-        <class>server.index.IndexItem</class>
-        <class>server.index.IndexType</class>
         <class>server.index.IndexGroup</class>
+        <class>server.index.IndexItem</class>
+        <class>server.index.IndexJob</class>
+        <class>server.index.IndexType</class>
         <class>server.i18n.Language</class>
         <class>server.i18n.Message</class>
         <class>server.lifecycle.LifeCycle</class>
@@ -83,9 +84,10 @@
         <class>server.FolderType</class>
         <class>server.Group</class>
         <class>server.GroupUser</class>
-        <class>server.index.IndexItem</class>
-        <class>server.index.IndexType</class>
         <class>server.index.IndexGroup</class>
+        <class>server.index.IndexItem</class>
+        <class>server.index.IndexJob</class>
+        <class>server.index.IndexType</class>
         <class>server.i18n.Language</class>
         <class>server.i18n.Message</class>
         <class>server.lifecycle.LifeCycle</class>
