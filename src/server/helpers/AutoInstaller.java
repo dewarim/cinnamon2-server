@@ -9,6 +9,7 @@ import server.exceptions.CinnamonConfigurationException;
 import server.extension.Initializer;
 import server.global.ConfThreadLocal;
 import server.interfaces.Repository;
+import utils.HibernateSession;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -51,7 +52,7 @@ public class AutoInstaller {
         initializer.setEm(em);
         initializer.setRepository(repository);
         EntityTransaction et = null;
-
+        HibernateSession.setLocalEntityManager(em);
         try {
             et = em.getTransaction();
             et.begin();
@@ -64,7 +65,6 @@ public class AutoInstaller {
 
             initializer.createDefaultObjectTypes();
             initializer.createMetasetTypes();
-//            em.flush();
             FolderType folderType = initializer.createDefaultFolderType();
 
             Acl acl = initializer.createDefaultAcl();
@@ -85,7 +85,6 @@ public class AutoInstaller {
             initializer.createConfigEntries();
             initializer.createRelationTypes();
             initializer.createRenderServerLifeCycle();
-
             initializer.initializeWorkflows(null);
 
             ConfThreadLocal config = ConfThreadLocal.getConf();
