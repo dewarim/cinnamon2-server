@@ -44,8 +44,6 @@ public class EditToReview extends BaseTransition {
 		documentValueNode.setText(String.valueOf(document.getId()));
 		reviewTask.setMetadata(editMeta.asXML());
 		
-		task.setProcstate(Constants.PROCSTATE_TASK_DONE);
-		
 		List<ObjectSystemData> newTasks = new ArrayList<ObjectSystemData>();
 		newTasks.add(reviewTask);
 		return newTasks;

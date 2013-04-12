@@ -360,7 +360,7 @@ public class WorkflowApi extends BaseExtension{
 		for(ObjectSystemData aTask : newTasks){
 			relDao.findOrCreateRelation(taskRelType, workflow, aTask, "");
 		}
-		
+        task.setProcstate(Constants.PROCSTATE_TASK_DONE);
 		if(newTasks.isEmpty()){
 			/*
 			 *  if there are no new tasks, check if finished.
@@ -372,12 +372,11 @@ public class WorkflowApi extends BaseExtension{
 				= oDao.findAllByTypeAndProcstateAndRelationToLeftOsd(ot, 
 					Constants.PROCSTATE_TASK_TODO, workflow);
 			log.debug("remaining tasks: "+remainingTasks.size());
-			if(remainingTasks.isEmpty()){
+			if(remainingTasks.isEmpty() || (remainingTasks.size() == 1 && remainingTasks.contains(task))){
 				log.debug(" => workflow is finished");
 				workflow.setProcstate(Constants.PROCSTATE_WORKFLOW_FINISHED);
 			}
-		}
-		
+		}		
         task.updateIndex();
 		for(ObjectSystemData aTask : newTasks){
             aTask.updateIndex();

@@ -42,8 +42,6 @@ public class DeadlineTransition extends BaseTransition {
             root.addElement("name").addText("deadlinewasreached");
             testMs.setContent(metadata.asXML());
         }
-        task.setProcstate(Constants.PROCSTATE_TASK_DONE);
-        
         
 		// return empty list.
 		return new ArrayList<ObjectSystemData>();

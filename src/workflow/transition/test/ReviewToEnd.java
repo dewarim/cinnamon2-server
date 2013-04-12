@@ -27,7 +27,6 @@ public class ReviewToEnd extends BaseTransition {
 		Document metadata = ParamParser.parseXmlToDocument(task.getMetadata(), null);
 		ObjectSystemData document = getOsdFromMetadata(metadata, "//param[name='document']/value");
 		document.setProcstate(Constants.PROCSTATE_REVIEW_OK);		
-		task.setProcstate(Constants.PROCSTATE_TASK_DONE);
 		
 		// no new tasks, return empty list.
 		return new ArrayList<ObjectSystemData>();

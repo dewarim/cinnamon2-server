@@ -40,8 +40,6 @@ public class ReviewToEdit extends BaseTransition {
 		documentValueNode.setText(String.valueOf(document.getId()));
 		editTask.setMetadata(editMeta.asXML());
 		
-		task.setProcstate(Constants.PROCSTATE_TASK_DONE);
-		
 		List<ObjectSystemData> newTasks = new ArrayList<ObjectSystemData>();
 		newTasks.add(editTask);
 		return newTasks;

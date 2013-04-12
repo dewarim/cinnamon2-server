@@ -103,9 +103,6 @@ public abstract class BaseTransition implements Transition {
         task.updateIndex();
         osdDao.makePersistent(task);
 
-        // copy content of task
-        // taskDef.copyContent(repositoryName, task);
-
         return task;
     }
 

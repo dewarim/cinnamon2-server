@@ -42,9 +42,6 @@ public class StartToReview extends BaseTransition {
 //		log.debug("set metadata of reviewTask to:\n"+reviewMeta.asXML());
 		reviewTask.setMetadata(reviewMeta.asXML());
 		
-		log.debug("set own procstate to done.");
-		task.setProcstate(Constants.PROCSTATE_TASK_DONE);
-		
 		List<ObjectSystemData> newTasks = new ArrayList<ObjectSystemData>();
 		newTasks.add(reviewTask);
 		return newTasks;

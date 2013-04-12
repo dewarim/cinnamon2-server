@@ -21,8 +21,6 @@ public class CancelReviewWorkflow  extends BaseTransition {
 		 * set workflow to finished. (happens in WorkflowAPI)
 		 */
 
-		task.setProcstate(Constants.PROCSTATE_TASK_DONE);
-		
 		// return empty list.
 		return new ArrayList<ObjectSystemData>();
 	}
