@@ -2,8 +2,10 @@
 
 ## 2.5.0
 
-* Refactored indexing. Previous versions of Cinnamon were vulnerable to index corruption under bad conditions. (For example, power loss in the split second after an object was indexed but before the changes were written to the database). Also the existing indexing solution had to update the indexed object itself after indexing was done, which could lead to race conditions between one process making changes and the IndexServer updating the database to record its successful index operation. 
-* New table index_jobs: you must create a new table 'index_jobs' in each repository. See the server/doc/migration folder for an example SQL script (migration-2.5.0.sql)
+* Refactored indexing. Previous versions of Cinnamon were vulnerable to index corruption under bad conditions. (For example, power loss in the split second after an object was indexed but before the changes were written to the database). Also the existing indexing solution had to update the indexed object itself after indexing was done, which could lead to race conditions between one process making changes and the IndexServer updating the database to record its successful index operation.
+* New table index_jobs: you must create a new table 'index_jobs' in each repository. See the server/doc/migration folder for an example SQL script (migration-2.5.0.sql). After the update, you may remove the indexOk and indexed columns from the objects and folders tables.
+* Fixed Metaset creation: Metasets always should have a valid content field.
+* setLifecycleState API changed slightly (and now works): parameter 'parameter' is now called 'config'.
 
 ## 2.4.3
 
