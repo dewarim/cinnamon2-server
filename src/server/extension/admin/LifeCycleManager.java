@@ -107,7 +107,7 @@ public class LifeCycleManager extends BaseExtension{
 	 * <li>[lcs_for_copy_id] = id of the state to which a copy of the object should revert. Optional.</li>
      * <li>state_class = name of a class to be executed when this lifecycle state is entered / left. This class
      * must exist in the server's classpath.</li>
-     * <li>[parameter] = parameter for the state_class. Should be an XML string. Optional, defaults to {@code <config />}</li>
+     * <li>[config] = config for the state_class. Should be an XML string. Optional, defaults to {@code <config />}</li>
      * <li>[set_default] = "true" or "false" - set this lifecycle state as the new default for the lifecycle.
 	 * <li>ticket=session ticket</li>
 	 * </ul>
@@ -137,6 +137,9 @@ public class LifeCycleManager extends BaseExtension{
                     lifeCycle.setDefaultState(state);
                 }
             }
+            if(cmd.containsKey("config")){
+                state.setConfig(cmd.get("config"));
+            }            
             lcsDao.makePersistent(state);
         }
         catch (Exception e){
