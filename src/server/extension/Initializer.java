@@ -388,6 +388,7 @@ public class Initializer extends BaseExtension {
         oTypes.put(Constants.OBJTYPE_DOCUMENT, "Document");
         oTypes.put(Constants.OBJTYPE_TRANSLATION_TASK, "Translation task");
         oTypes.put(Constants.OBJTYPE_IMAGE, "Image");
+        oTypes.put(Constants.OBJTYPE_NOTIFICATION, Constants.OBJTYPE_NOTIFICATION);
         oTypes.put(Constants.OBJTYPE_WORKFLOW, Constants.OBJTYPE_WORKFLOW + ".workflow");
         oTypes.put(Constants.OBJTYPE_WORKFLOW_TEMPLATE, Constants.OBJTYPE_WORKFLOW_TEMPLATE + ".description");
         oTypes.put(Constants.OBJTYPE_TASK, Constants.OBJTYPE_TASK + ".description");
@@ -480,6 +481,7 @@ public class Initializer extends BaseExtension {
                 "/system/config",
                 "/system/transient/render_tasks",
                 "/system/transient/translation_tasks",
+                "/system/transient/workflow/notifications",
                 "/system/users/admin/config",
                 "/system/users/admin/home",
                 "/system/users/admin/carts",
@@ -718,7 +720,8 @@ public class Initializer extends BaseExtension {
         log.debug("create metaset types");
         MetasetTypeDAO mtDao = daoFactory.getMetasetTypeDAO(em);
         String[] metasetNames = {"search", "cart", "translation_extension", "render_input", "render_output", 
-                "test", "tika", "task_definition", "transition", "workflow_template"};
+                "test", "tika", "task_definition", "transition", "workflow_template", 
+                Constants.METASET_NOTIFICATION};
         for(String name : metasetNames){
             MetasetType metasetType = new MetasetType(name, name, null);
             mtDao.makePersistent(metasetType);
