@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import server.account.TemplateProvider;
+import server.audit.AuditService;
+import server.audit.LogEvent;
 import server.dao.*;
 import server.data.*;
 import server.exceptions.CinnamonConfigurationException;
@@ -677,7 +679,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         new MetasetService().initializeMetasets(osd,(String) cmd.get("metasets"));
         osd.updateIndex();
-
+        
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(osd.getId()));
         return resp;
@@ -2821,7 +2823,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         (new Validator(user)).validateSetContent(osd);
         String repositoryName = repository.getName();
         osd.deleteContent(repositoryName);// TODO: this action is not recoverable.
-
+        String oldContentPath = osd.getContentPath() != null ? osd.getContentPath() : "";
         if (cmd.containsKey("file")) {
             String format = (String) cmd.get("format");
             log.debug("file_format: " + format);
@@ -2835,7 +2837,13 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         }
         osd.updateAccess(getUser());
         osd.updateIndex();
-
+        
+        // audit trail:
+        if(! oldContentPath.equals(osd.getContentPath())){       
+            AuditService auditService = new AuditService(repository.getAuditConnection());
+            String logMessage = "setContent";
+            auditService.createLogEvent(osd, user, "contentPath", oldContentPath, osd.getContentPath(), logMessage);
+        }
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.set.content");
         return resp;
@@ -2910,6 +2918,12 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         pre.updateIndex();
         osd.updateIndex();
 
+        // audit trail:
+        AuditService auditService = new AuditService(repository.getAuditConnection());
+        String logMessage = "new.version";
+        LogEvent event = auditService.createLogEvent(osd, user, "version", pre.getVersion(), osd.getVersion(), logMessage);
+        auditService.insertLogEvent(event);
+        
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(osd.getId()));
         return resp;
