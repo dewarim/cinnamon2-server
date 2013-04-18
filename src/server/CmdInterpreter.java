@@ -203,6 +203,10 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             }
             response = repository.getCommandRegistry().invoke(command, cmd, res, user, repository);
             etx.commit();
+            if(repository.getAuditConnection() != null){
+                log.debug("commit audit log");
+                repository.getAuditConnection().commit();                        
+            }
             log.debug("closing em after invoke.");
             getEm().close();
 
@@ -306,8 +310,11 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         try {
             if (etx != null) {
                 log.debug("Exception occurred => rollback database.");
-                etx.rollback();
-
+                etx.rollback();                
+            }
+            if(repository.getAuditConnection() != null){
+                log.debug("rollback audit log");
+                repository.getAuditConnection().rollback();
             }
         } catch (Exception re) {
             log.error("Failed to rollback; " + re.getMessage());
@@ -795,7 +802,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         // execute the new LifeCycleState if necessary.
         if (copy.getState() != null) {
-            copy.getState().enterState(copy, copy.getState());
+            copy.getState().enterState(copy, copy.getState(), repository, user);
         }
 
         copy.updateIndex();
@@ -2896,7 +2903,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         // execute the new LifeCycleState if necessary.
         if (osd.getState() != null) {
-            osd.getState().enterState(osd, osd.getState());
+            osd.getState().enterState(osd, osd.getState(), repository, user);
         }
 
         log.debug("index new object");

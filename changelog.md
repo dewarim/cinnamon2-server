@@ -1,5 +1,12 @@
 # Cinnamon server changelog
 
+## 2.5.1
+
+* New Audit-Log table. See server/doc/migration folder for an upgrade script. This is optional. To enable the audit-log (currently only for lifecycles), please add an element audit-jdbc-driver and audit-jdbc-url to your cinnamon configuration file.
+  Example:
+  <audit-jdbc-driver>org.postgresql.Driver</audit-jdbc-driver>
+  <audit-jdbc-url>jdbc:postgresql://127.0.0.1/cinnamon_audit?user=cinnamon&amp;password=cinnamon</audit-jdbc-url>
+
 ## 2.5.0
 
 * Refactored indexing. Previous versions of Cinnamon were vulnerable to index corruption under bad conditions. (For example, power loss in the split second after an object was indexed but before the changes were written to the database). Also the existing indexing solution had to update the indexed object itself after indexing was done, which could lead to race conditions between one process making changes and the IndexServer updating the database to record its successful index operation.

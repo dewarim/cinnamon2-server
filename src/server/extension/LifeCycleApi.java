@@ -95,7 +95,7 @@ public class LifeCycleApi extends BaseExtension{
             throw new CinnamonException("error.undefined.lifecycle_state");
         }
 
-        lifeCycleState.enterState(osd, lifeCycleState);
+        lifeCycleState.enterState(osd, lifeCycleState, repository, user);
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.attach_lifecycle");
@@ -132,7 +132,7 @@ public class LifeCycleApi extends BaseExtension{
         }
         new Validator(getUser()).validateSetSysMeta(osd);
 
-        osd.getState().exitState(osd, null);
+        osd.getState().exitState(osd, null, repository, user);
         osd.setState(null);
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.detach_lifecycle");
@@ -195,8 +195,8 @@ public class LifeCycleApi extends BaseExtension{
             lifeCycleState = lcsDao.get(ParamParser.parseLong(cmd.get("lifecycle_state_id"),"error.param.lifecycle_state_id"));
         }
 
-        osd.getState().exitState(osd, lifeCycleState);
-        lifeCycleState.enterState(osd, lifeCycleState); // if this fails, rollback occurs.
+        osd.getState().exitState(osd, lifeCycleState, repository, user);
+        lifeCycleState.enterState(osd, lifeCycleState, repository, user); // if this fails, rollback occurs.
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.change_lifecycle");

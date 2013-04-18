@@ -1,6 +1,8 @@
 package server;
 
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +45,8 @@ public class CinnamonRepository implements Repository{
 	WorkflowServer workflowServer;
 	Thread workflowServerThread;
 	LuceneBridge lucene;
-	
+	Connection auditConnection;
+    
 	public CinnamonRepository(){
 		
 	}
@@ -68,7 +71,23 @@ public class CinnamonRepository implements Repository{
                     table.getAcl());
             sqlCustomConns.put(table.getName(),cust_con);
         }
-
+        
+        String auditSqlDriver = conf.getField("audit-jdbc-driver", null);
+        if(auditSqlDriver != null){
+            try{
+                Class.forName(auditSqlDriver).newInstance();
+                auditConnection = DriverManager.getConnection(conf.getField("audit-jdbc-url", null));
+                auditConnection.setAutoCommit(false);
+                log.debug("Created auditConnection "+auditConnection);
+            }
+            catch (Exception e){
+                log.warn("Could not establish audit-log connection", e);
+            }
+        }
+        else{
+            log.debug("No audit-jdbc-driver defined - audit logging disabled.");
+        }
+                        
 		EntityManager em = hibernateSession.getEntityManager();
 		this.lucene = new LuceneBridge(name, em);
 		
@@ -228,5 +247,13 @@ public class CinnamonRepository implements Repository{
 
     public void setCustomHibernateSession(HibernateSession customHibernateSession) {
         this.customHibernateSession = customHibernateSession;
+    }
+
+    public Connection getAuditConnection() {
+        return auditConnection;
+    }
+
+    public void setAuditConnection(Connection auditConnection) {
+        this.auditConnection = auditConnection;
     }
 }
