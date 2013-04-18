@@ -17,3 +17,8 @@ ALTER TABLE index_jobs
   OWNER TO cinnamon;
 
 --- Note: if your project uses a custom persistence.xml, you have to add the server.index.IndexJob class to the mapping.
+
+ALTER TABLE objects drop column index_ok;
+ALTER TABLE folders drop column index_ok;
+ALTER TABLE objects drop column indexed;
+ALTER TABLE folders drop column indexed;
