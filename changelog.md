@@ -6,6 +6,7 @@
   Example:
   <audit-jdbc-driver>org.postgresql.Driver</audit-jdbc-driver>
   <audit-jdbc-url>jdbc:postgresql://127.0.0.1/cinnamon_audit?user=cinnamon&amp;password=cinnamon</audit-jdbc-url>
+* Fixed bug in WorkflowAPI: ACLs are checked properly on doTransition now (would ignore task owner's permissions and deny access under some circumstances).
 
 ## 2.5.0
 
@@ -51,7 +52,7 @@
 
 ## 2.3.0
 
-+ New: made all CinnamonMethods check for possible ChangeTriggers (to help with customization) 
++ New: made all CinnamonMethods check for possible ChangeTriggers (to help with customization)
 + Fixed: copy would not set latesthead/latestbranch to true, but copy the source's state.
 + Fixed: MetasetService would in one case instantiate a second (unnecessary) MetasetService.
 + Fixed: delete OSD no longer sets additional object to latestHead in cases where the deleted
@@ -61,12 +62,11 @@
          parameter. Old behaviour was to keep metasets. If you want to set an individual metaset, use the setMetaset
          API call.
 + New: Set language on user object upon connect() only if necessary, and use "und" if language param is empty.
-+ Fixed: copy of an OSD will not inherit "locked" status from original.                   
-         
++ Fixed: copy of an OSD will not inherit "locked" status from original.
+
 ## 2.2.2
 
 + Added Lifeycle Audit logging via ChangeTrigger. See doc/migration-2.2.2.sql for necessary database changes.
-    To enable 
 + Fix broken query which could cause version number corruption.
 
 ## 2.2.1

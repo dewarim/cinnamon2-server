@@ -292,10 +292,7 @@ public class WorkflowApi extends BaseExtension{
 			throw new CinnamonException("error.object.not.found");
 		}
         Validator val = new Validator(user);
-        Acl acl = task.getAcl();
-        val.validatePermission(acl, PermissionName.READ_OBJECT_CUSTOM_METADATA); // read workflow metadata
-        val.validatePermission(acl, PermissionName.WRITE_OBJECT_CUSTOM_METADATA); // write workflow metadata
-        val.validatePermission(acl, PermissionName.WRITE_OBJECT_SYS_METADATA); // change procstate
+        val.validatePermissions(task, PermissionName.READ_OBJECT_CUSTOM_METADATA, PermissionName.WRITE_OBJECT_CUSTOM_METADATA, PermissionName.WRITE_OBJECT_SYS_METADATA);
         
 		String transitionName = cmd.get("transition_name");
 		String transitionXpath = String.format("/meta/metaset[@type='transition']/transition[name='%s']",transitionName);
