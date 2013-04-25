@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cinnamon_config>
  
-  <!-- The individual elements of this config file are explained under:
+  <!--
+    The individual elements of this config file are explained under:
   	http://cinnamon-cms.de/cinnamonserver/administration/cinnamon_config.xml
    -->
 
@@ -12,7 +13,8 @@
   <!-- <passwordSalt>##asitwereicannotthinkofabetterone##</passwordSalt> -->
   <maxTokensPerDay>3</maxTokensPerDay>
    
-  <startIndexServer>false</startIndexServer>
+  <startIndexServer>true</startIndexServer>
+  <startWorkflowServer>false</startWorkflowServer>
 
   <sql_user>cinnamon</sql_user>
   <sql_pwd>cinnamon</sql_pwd>
@@ -47,6 +49,7 @@
  		<name>cmn_test</name>
  		<!-- session expiration time in milliseconds -->
  	    <sessionExpirationTime>360000</sessionExpirationTime>
+        <!-- Note: cinnamon_test will always create a new database. Use 'cinnamon' for production use -->
  		<persistence_unit>cinnamon_test</persistence_unit>
         <apiClasses>
            <!-- The only obligatory apiClass: -->
@@ -71,7 +74,6 @@
         <categories>
             <category>TEST</category>
         </categories>
-
  	</repository>
   </repositories>
 
@@ -81,5 +83,7 @@
   <db_type>mssql2000</db_type> 
   <jdbc_driver>net.sourceforge.jtds.jdbc.Driver</jdbc_driver>
   <jdbc_protocol>sqlserver</jdbc_protocol>
-  
+    
+  <audit-jdbc-driver>org.postgresql.Driver</audit-jdbc-driver>
+  <audit-jdbc-url>jdbc:postgresql://127.0.0.1/cinnamon_audit?user=cinnamon&amp;password=cinnamon</audit-jdbc-url>
 </cinnamon_config>
