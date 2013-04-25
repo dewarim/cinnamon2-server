@@ -7,7 +7,7 @@ the path to this directory.
 Edit the config files. They should contain comments as to what kind of data you need 
 to change / edit to reflect your own system's configuration. When in doubt or if you
 have any questions regarding the installation process, contact us via dewarim@sourceforge.net
-or ingo.wiarda@horner-project.eu
+or ingo.wiarda@texolution.eu
 Note: currently, you do not need to change the configuration files for Dandelion.
 
 Add a database "demo" and a user "cinnamon" with password "cinnamon" to your
@@ -15,7 +15,7 @@ PostgreSQL-database. (The current cinnamon.war is configured for Postgresql. If 
 another configuration, please contact us).
 
 Copy cinnamon.war to your servlet container, for example:
-/var/lib/tomcat6/webapps/cinnamon.war
+/var/lib/tomcat7/webapps/cinnamon.war
 
 Restart the servlet container.
 Under http://$your_ip_address:8080/cinnamon/cinnamon you should find an XML-list of
