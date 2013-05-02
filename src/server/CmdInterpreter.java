@@ -2297,6 +2297,10 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         if(name == null || name.trim().length() == 0){
             throw new CinnamonException("error.param.name");
         }
+        if(! user.verifySuperuserStatus(em) ){
+            throw new CinnamonException("error.access.denied");
+        }
+        
         Document config = ParamParser.parseXmlToDocument(cmd.get("config"), "error.parse.config");
         ConfigEntryDAO ceDao = daoFactory.getConfigEntryDAO(em);
         ConfigEntry configEntry = ceDao.findByName(name);
