@@ -122,7 +122,6 @@ public class RenderServerConnector extends BaseExtension {
         osd.setType(renderTaskType);
         ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
         oDao.makePersistent(osd);
-        osd.updateIndex();
 
         // create response
         XmlResponse resp = new XmlResponse(res);

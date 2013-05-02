@@ -131,11 +131,6 @@ public class WorkflowApi extends BaseExtension{
 		ObjectSystemData startTaskDef = relations.get(0).getRight();
 		ObjectSystemData startTask = createTask(startTaskDef, workflow );
 
-		log.debug("Indexing new workflow and start task");
-
-        workflow.updateIndex();
-        startTask.updateIndex();
-
 		XmlResponse resp = new XmlResponse(res);
 		resp.addTextNode("workflowId", String.valueOf(workflow.getId()));
 		return resp;
@@ -374,12 +369,5 @@ public class WorkflowApi extends BaseExtension{
 				workflow.setProcstate(Constants.PROCSTATE_WORKFLOW_FINISHED);
 			}
 		}		
-        task.updateIndex();
-		for(ObjectSystemData aTask : newTasks){
-            aTask.updateIndex();
-		}
-		if(workflow.getProcstate().equals(Constants.PROCSTATE_WORKFLOW_FINISHED)){
-            workflow.updateIndex();
-		}
 	}
 }

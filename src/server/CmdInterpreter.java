@@ -137,7 +137,8 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
                 setEm(repository.getHibernateSession().getEntityManager());
                 HibernateSession.setLocalEntityManager(getEm()); // set this thread's EntityManager
                 log.debug("initialize Session");
-
+                
+                LocalRepository.setRepository(repository);
                 EntityTransaction et = em.getTransaction();
                 et.begin();
                 Session session = null;
@@ -208,7 +209,23 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             if(repository.getAuditConnection() != null){
                 log.debug("commit audit log");
                 repository.getAuditConnection().commit();                        
-            }
+            }            
+            
+            log.debug("Update Lucene Index");
+            EntityTransaction indexUpdate = em.getTransaction();
+            indexUpdate.begin();
+            Map<Indexable, IndexAction> updatedObjects = LocalRepository.getUpdatedObjects();
+            for(Indexable indexable : updatedObjects.keySet()){
+                log.debug("Working on indexable #"+indexable.myId());
+                LuceneBridge luceneBridge = repository.getLuceneBridge();
+                switch(updatedObjects.get(indexable)){
+                    case ADD: luceneBridge.addObjectToIndex(indexable, false);break;
+                    case UPDATE: luceneBridge.updateObjectInIndex(indexable);break;
+                    case REMOVE: luceneBridge.removeObjectFromIndex(indexable);break;
+                }
+            }           
+            indexUpdate.commit();
+
             log.debug("closing em after invoke.");
             getEm().close();
 
@@ -264,12 +281,14 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             response = resp;
 
         } finally {
+            LocalRepository.cleanUp();
             if (conf.getUseSessionLogging()) {
                 clearSessionLogging();
             }
             if (getEm() == null) {
                 log.debug("EM is null");
-            } else {
+            } 
+            else {
                 if (getEm().isOpen()) {
                     log.debug("closing em");
                     getEm().close();
@@ -310,9 +329,9 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
     void rollback(EntityTransaction etx) {
         try {
-            if (etx != null) {
+            if (etx != null && etx.isActive()) {
                 log.debug("Exception occurred => rollback database.");
-                etx.rollback();                
+                etx.rollback();
             }
             if(repository.getAuditConnection() != null){
                 log.debug("rollback audit log");
@@ -677,8 +696,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         ObjectSystemDataDAO osdDao = daoFactory.getObjectSystemDataDAO(em);
         osdDao.makePersistent(osd);
 
-        new MetasetService().initializeMetasets(osd,(String) cmd.get("metasets"));
-        osd.updateIndex();
+        new MetasetService().initializeMetasets(osd, (String) cmd.get("metasets"));
         
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(osd.getId()));
@@ -807,8 +825,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             copy.getState().enterState(copy, copy.getState(), repository, user);
         }
 
-        copy.updateIndex();
-
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(copy.getId()));
         return resp;
@@ -868,24 +884,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         CopyResult copyResult = sourceFolder.copyFolder(targetFolder, croakOnError, versions, user);
 
-        log.debug("copy complete - now adding new folders to Lucene.");
-        for (Long id : copyResult.getNewFolders()) {
-            Folder f = folderDao.get(id);
-            f.updateIndex();
-        }
-        log.debug("folders have been added; now submitting new objects to Lucene");
-        ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
-        for (Long id : copyResult.getNewObjects()) {
-            ObjectSystemData o = oDao.get(id);
-            if (o == null) {
-                log.error("no object found with id " + id);
-            }
-            else{
-                o.updateIndex();
-            }
-        }
-
-        log.debug("objects have been indexed.");
         return new XmlResponse(res, copyResult.toXml());
     }
 
@@ -960,7 +958,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
                 log.debug("current object id after persists_relation: {} ", clone.getId());
                 log.debug("relation-id: {}", relCopy.getId());
             }
-            clone.updateIndex();
         }
 
 
@@ -1017,7 +1014,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         folderDao.makePersistent(folder);
         log.debug("repository: " + repository.getName());
-        folder.updateIndex();
         
         log.debug("CreateFolderId: " + folder.getId());
         XmlResponse resp = new XmlResponse(res);
@@ -1529,23 +1525,12 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         ObjectSystemData osd = osdDao.get(id);
         log.debug("before validate.");
         (new Validator(user)).validateDelete(osd);
-        LuceneBridge lucene = repository.getLuceneBridge();
-        lucene.removeObjectFromIndex(osd);
 
-        // update predecessor in index (latesthead/-branches)
-        ObjectSystemData preOsd = osd.getPredecessor();
         try {
             log.debug("### delete object: "+id+" ###");
             osdDao.delete(id);
         } catch (Exception e) {
-            // delete failed, so we re-add the object to the index:            
-            osd.updateIndex();
             throw new CinnamonException(e);
-        }
-
-        if (preOsd != null) {
-            log.debug("update predecessor "+preOsd.getId()+" after delete object");
-            preOsd.updateIndex();
         }
 
         XmlResponse resp = new XmlResponse(res);
@@ -2555,7 +2540,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         osd.setMetadata(metadata);
         osd.updateAccess(getUser());
-        osd.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         Element root = resp.getDoc().addElement("cinnamon");
@@ -2720,7 +2704,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             osd.setAcl(acl);
         }
         osd.updateAccess(getUser());
-        osd.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.set.sys_meta");
@@ -2750,7 +2733,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         (new Validator(user)).validateLock(osd, user);
         User user = getUser();
         osd.setLocked_by(user);
-        osd.updateIndex();
         log.debug("lock - done.");
 
         XmlResponse resp = new XmlResponse(res);
@@ -2779,8 +2761,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         ObjectSystemData osd = osdDAO.get(cmd.get("id"));
         (new Validator(user)).validateUnlock(osd);
         osd.setLocked_by(null);
-        log.debug("before sync");
-        osd.updateIndex();
         log.debug("unlock - done");
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.object.unlock");
@@ -2836,7 +2816,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             new TikaParser().parse(osd, repository.getName());
         }
         osd.updateAccess(getUser());
-        osd.updateIndex();
         
         // audit trail:
         if(! oldContentPath.equals(osd.getContentPath())){       
@@ -2914,10 +2893,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             osd.getState().enterState(osd, osd.getState(), repository, user);
         }
 
-        log.debug("index new object");
-        pre.updateIndex();
-        osd.updateIndex();
-
         // audit trail:
         AuditService auditService = new AuditService(repository.getAuditConnection());
         String logMessage = "new.version";
@@ -2981,7 +2956,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         (new Validator(user)).validateUpdateFolder(cmd, folder);
         folder = folderDao.update(id, cmd);
-        folder.updateIndex();
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.update.folder");
         return resp;
@@ -3741,7 +3715,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             }
             ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
             oDao.makePersistent(osd);
-            osd.updateIndex();
             XmlResponse resp = new XmlResponse(res);
             resp.addTextNode("objectId", String.valueOf(osd.getId()));
             return resp;
@@ -3995,12 +3968,14 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             Folder folder = fDao.get(id);
             (new Validator(user)).validatePermission(folder.getAcl(), PermissionName.EDIT_FOLDER);
             metasetOwner = folder;
+            folder.updateIndexOnCommit();
         }
         else if(className.equals("OSD")){
             ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
             ObjectSystemData osd = oDao.get(id);
             (new Validator(user)).validateSetMeta(osd);
             metasetOwner = osd;
+            osd.updateIndexOnCommit();
         }
         else{
             throw new CinnamonException("error.param.class_name");
@@ -4019,7 +3994,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         MetasetService metasetService = new MetasetService();
         Metaset metaset = metasetService.createOrUpdateMetaset(metasetOwner, metasetType, cmd.get("content"), writePolicy);
-        metasetOwner.updateIndex();
 
         XmlResponse resp = new XmlResponse(res);
         resp.getDoc().add(Metaset.asElement("meta",metaset));
@@ -4058,19 +4032,17 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             Folder folder = fDao.get(id);
             (new Validator(user)).validatePermission(folder.getAcl(), PermissionName.EDIT_FOLDER);
             metasetOwner = folder;
+            folder.updateIndexOnCommit();
         }
         else if(className.equals("OSD")){
             ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
             ObjectSystemData osd = oDao.get(id);
             (new Validator(user)).validateSetMeta(osd);
             metasetOwner = osd;
+            osd.updateIndexOnCommit();
         }
         else{
             throw new CinnamonException("error.param.class_name");
-        }
-
-        if(metasetOwner == null){
-            throw new CinnamonException("error.param.id");
         }
 
         MetasetDAO mDao = daoFactory.getMetasetDAO(em);
@@ -4080,8 +4052,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         }
 
         metasetOwner.addMetaset(metaset);
-        metasetOwner.updateIndex();
-
         return new XmlResponse(res, "<success>success.link.metaset</success>");
     }
 
@@ -4117,19 +4087,17 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             Folder folder = fDao.get(id);
             (new Validator(user)).validatePermission(folder.getAcl(), PermissionName.EDIT_FOLDER);
             metasetOwner = folder;
+            folder.updateIndexOnCommit();
         }
         else if(className.equals("OSD")){
             ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
             ObjectSystemData osd = oDao.get(id);
             (new Validator(user)).validateSetMeta(osd);
             metasetOwner = osd;
+            osd.updateIndexOnCommit();
         }
         else{
             throw new CinnamonException("error.param.class_name");
-        }
-
-        if(metasetOwner == null){
-            throw new CinnamonException("error.param.id");
         }
 
         MetasetDAO mDao = daoFactory.getMetasetDAO(em);
@@ -4139,8 +4107,6 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         }
 
         new MetasetService().unlinkMetaset(metasetOwner, metaset);
-        metasetOwner.updateIndex();
-
         return new XmlResponse(res, "<success>success.link.metaset</success>");
     }
 
@@ -4180,20 +4146,20 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         if(className.equals("Folder")){
             // should use Java 7 with switch.
             FolderDAO fDao = daoFactory.getFolderDAO(em);
-            metasetOwner = fDao.get(id);
+            Folder folder = fDao.get(id);
+            metasetOwner = folder;
+            folder.updateIndexOnCommit();
         }
         else if(className.equals("OSD")){
             ObjectSystemDataDAO oDao = daoFactory.getObjectSystemDataDAO(em);
-            metasetOwner =  oDao.get(id);
+            ObjectSystemData osd = oDao.get(id);
+            metasetOwner =  osd;
+            osd.updateIndexOnCommit();
         }
         else{
             throw new CinnamonException("error.param.class_name");
         }
-
-        if(metasetOwner == null){
-            throw new CinnamonException("error.param.id");
-        }
-
+   
         MetasetTypeDAO mtDao = daoFactory.getMetasetTypeDAO(em);
         MetasetType metasetType = mtDao.findByName(cmd.get("type_name"));
         if(metasetType== null){
@@ -4202,10 +4168,10 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
         DeletePolicy deletePolicy = DeletePolicy.valueOf(cmd.get("delete_policy").toUpperCase());
 
-        MetasetService metasetService =  new MetasetService();
+        MetasetService metasetService =  new MetasetService();        
         Collection<IMetasetOwner> affectedItems = metasetService.deleteMetaset(metasetOwner, metasetType, validator, deletePolicy);
         for(IMetasetOwner exOwner : affectedItems){
-            exOwner.updateIndex();
+            LocalRepository.addIndexable(exOwner, IndexAction.UPDATE);
         }
 
         return new XmlResponse(res, "<success>success.link.metaset</success>");

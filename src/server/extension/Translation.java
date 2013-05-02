@@ -201,7 +201,6 @@ public class Translation extends BaseExtension {
             } else {
                 throw new CinnamonException("error.translation_exists");
             }
-            targetNode.updateIndex();
 
             XmlResponse resp = new XmlResponse(res);
             Document doc = resp.getDoc();
@@ -338,7 +337,6 @@ public class Translation extends BaseExtension {
             emptyCopy.setMetadata(metaNode);
             objectTreeCopier.getCopyCache().put(osd, emptyCopy);
             newTree.add(emptyCopy);
-            emptyCopy.updateIndex();
             newObjects.add(emptyCopy);
         }
         ObjectSystemData treeRoot = newTree.get(0).getRoot();
@@ -409,7 +407,6 @@ public class Translation extends BaseExtension {
                     throw new CinnamonException("error.translation.internal");
                 }
                 leaf.setMetadata(metaNode);
-                leaf.updateIndex();
                 newObjects.add(leaf);
                 emptyCopies.put(osd, leaf);
             }

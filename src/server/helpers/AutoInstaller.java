@@ -51,6 +51,7 @@ public class AutoInstaller {
         Initializer initializer = new Initializer();
         initializer.setEm(em);
         initializer.setRepository(repository);
+        LocalRepository.setRepository(repository);
         EntityTransaction et = null;
         HibernateSession.setLocalEntityManager(em);
         try {
@@ -63,7 +64,7 @@ public class AutoInstaller {
             }
             log.debug("Starting initialization.");
 
-            initializer.createDefaultObjectTypes();
+            initializer.createDefaultObjectTypes();         
             initializer.createMetasetTypes();
             FolderType folderType = initializer.createDefaultFolderType();
 
@@ -74,8 +75,9 @@ public class AutoInstaller {
             log.debug(acl.toString());
             log.debug(admin.toString());
             log.debug(folderType.toString());
+            em.flush();
             Folder rootFolder = initializer.createRootFolder(acl, admin, folderType);
-
+            em.flush();
             initializer.createSystemFolders();
             initializer.createFormats();
             initializer.createSystemFolders();

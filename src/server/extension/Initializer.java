@@ -213,7 +213,7 @@ public class Initializer extends BaseExtension {
                 true, "<vaParams/>", false, ig, true, true, true);
         iiDao.makePersistent(ii);
         ii = new IndexItem("test.index.search_condition", "//name",
-                "string(/meta/name) = 'Smaug'", "conditional_content", type,
+                "string(/meta/metaset[@type='test']/name) = 'Smaug'", "conditional_content", type,
                 true, "<vaParams/>", false, ig, true, true, true);
         iiDao.makePersistent(ii);
         type = itDao.findByName("xpath.decimal_indexer");
@@ -399,7 +399,6 @@ public class Initializer extends BaseExtension {
             ObjectType oType = new ObjectType(name, oTypes.get(name));
             otDao.makePersistent(oType);
         }
-
         ObjectType defaultObjectType = new ObjectType(Constants.OBJTYPE_DEFAULT, "Default Object Type");
         otDao.makePersistent(defaultObjectType);
         return defaultObjectType;
