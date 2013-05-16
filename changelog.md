@@ -4,6 +4,7 @@
 
 * RelationTypes have two new Boolean fields: copyOnLeftVersion and copyOnRightVersion. When an object is versioned, those fields are checked to determine if existing relations on the predecessor are copied over to the new version.
   To upgrade, please use the migration-2.5.2.sql script (for Postgres).
+* Fixed bug in LifeCycleState class which would apply the configuration parameter of the current state object instead of the new one when entering a new state. For example, this could cause the ChangeAclState class to use the wrong ACL.
 
 ## 2.5.1
 
