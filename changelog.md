@@ -1,5 +1,10 @@
 # Cinnamon server changelog
 
+## 2.5.2-M1
+
+* RelationTypes have two new Boolean fields: copyOnLeftVersion and copyOnRightVersion. When an object is versioned, those fields are checked to determine if existing relations on the predecessor are copied over to the new version.
+  To upgrade, please use the migration-2.5.2.sql script (for Postgres).
+
 ## 2.5.1
 
 * New Audit-Log table. See server/doc/migration folder for an upgrade script. This is optional. To enable the audit-log (currently only for lifecycles), please add an element audit-jdbc-driver and audit-jdbc-url to your cinnamon configuration file.
@@ -7,6 +12,8 @@
   <audit-jdbc-driver>org.postgresql.Driver</audit-jdbc-driver>
   <audit-jdbc-url>jdbc:postgresql://127.0.0.1/cinnamon_audit?user=cinnamon&amp;password=cinnamon</audit-jdbc-url>
 * Fixed bug in WorkflowAPI: ACLs are checked properly on doTransition now (would ignore task owner's permissions and deny access under some circumstances).
+* Fixed bug in setConfigEntry: always make sure that user has administrator privileges before allowing him to change configuration entries. #security
+* Fixed bug in checkTranslation (which can fail on non-XML language depndent content which already has an existing translation relation).
 
 ## 2.5.0
 

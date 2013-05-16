@@ -2891,7 +2891,10 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         log.debug("makePersistent");
         ObjectSystemDataDAO osdDao = daoFactory.getObjectSystemDataDAO(em);
         osdDao.makePersistent(osd);
-
+        
+        // copy relations if their relationType is configured accordingly 
+        pre.copyRelations(osd, CopyRelationMode.VERSION);
+        
         // execute the new LifeCycleState if necessary.
         if (osd.getState() != null) {
             osd.getState().enterState(osd, osd.getState(), repository, user);
