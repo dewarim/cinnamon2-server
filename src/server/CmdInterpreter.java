@@ -2825,7 +2825,8 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         if(! oldContentPath.equals(osd.getContentPath())){       
             AuditService auditService = new AuditService(repository.getAuditConnection());
             String logMessage = "setContent";
-            auditService.createLogEvent(osd, user, "contentPath", oldContentPath, osd.getContentPath(), logMessage);
+            LogEvent event = auditService.createLogEvent(osd, user, "contentPath", oldContentPath, osd.getContentPath(), logMessage);
+            event.saveToActionLog();
         }
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.set.content");
@@ -2904,6 +2905,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         AuditService auditService = new AuditService(repository.getAuditConnection());
         String logMessage = "new.version";
         LogEvent event = auditService.createLogEvent(osd, user, "version", pre.getVersion(), osd.getVersion(), logMessage);
+        event.saveToActionLog();
         auditService.insertLogEvent(event);
         
         XmlResponse resp = new XmlResponse(res);
