@@ -2826,7 +2826,9 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             AuditService auditService = new AuditService(repository.getAuditConnection());
             String logMessage = "setContent";
             LogEvent event = auditService.createLogEvent(osd, user, "contentPath", oldContentPath, osd.getContentPath(), logMessage);
-            event.saveToActionLog();
+            if(event != null){
+                event.saveToActionLog();
+            }
         }
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("success", "success.set.content");
@@ -2905,8 +2907,10 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
         AuditService auditService = new AuditService(repository.getAuditConnection());
         String logMessage = "new.version";
         LogEvent event = auditService.createLogEvent(osd, user, "version", pre.getVersion(), osd.getVersion(), logMessage);
-        event.saveToActionLog();
         auditService.insertLogEvent(event);
+        if(event != null){
+            event.saveToActionLog();
+        }
         
         XmlResponse resp = new XmlResponse(res);
         resp.addTextNode("objectId", String.valueOf(osd.getId()));
