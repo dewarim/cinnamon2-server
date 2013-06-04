@@ -24,7 +24,6 @@ import server.exceptions.CinnamonConfigurationException;
 import server.exceptions.CinnamonException;
 import server.global.Constants;
 import server.global.PermissionName;
-import server.index.LuceneBridge;
 import server.interfaces.CommandRegistry;
 import server.interfaces.Repository;
 import server.interfaces.Response;
