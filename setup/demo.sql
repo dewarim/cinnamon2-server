@@ -1,0 +1,4 @@
+-- note: a populated demo.sql script is kept in cinnamon2-demo-data/demo.sql
+-- you may create a completely fresh database by using 
+-- the auto-initialize element in the cinnamon_config.xml and also setting the persistence_unit
+-- to cinnamon_test (which will create a new empty database on each server start)  
