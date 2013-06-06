@@ -314,9 +314,11 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
 
     void initializeLocalMessage() {
         if (em == null || !em.isOpen()) {
-            log.warn("Cannot initialize localMessage without database connection.");
+            log.error("Cannot initialize localMessage without database connection.");
             return;
         }
+        EntityTransaction et = em.getTransaction();
+        et.begin();
         MessageDAO mDao = daoFactory.getMessageDAO(em);
         UiLanguageDAO lDao = daoFactory.getUiLanguageDAO(em);
         UiLanguage undetermined = lDao.findByIsoCode("und");
@@ -325,6 +327,7 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
             return;
         }
         LocalMessage.initializeLocalMessage(mDao, undetermined);
+        et.commit();        
     }
 
     void rollback(EntityTransaction etx) {
