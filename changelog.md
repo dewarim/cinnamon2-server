@@ -1,11 +1,16 @@
 # Cinnamon server changelog
 
-## 2.5.2-M1
+## 2.5.2
 
 * RelationTypes have two new Boolean fields: copyOnLeftVersion and copyOnRightVersion. When an object is versioned, those fields are checked to determine if existing relations on the predecessor are copied over to the new version.
   To upgrade, please use the migration-2.5.2.sql script (for Postgres).
 * Fixed bug in LifeCycleState class which would apply the configuration parameter of the current state object instead of the new one when entering a new state. For example, this could cause the ChangeAclState class to use the wrong ACL.
+* Added a column after_work_trigger (Boolean, default: false) to change_triggers. This allows you to schedule post-triggers *after* the request's changes have been committed to the database. You should not configure a ChangeTrigger as both a post- and an after-work trigger, because then it will run twice.
 
+	--- Postgresql:
+    alter table change_triggers add column after_work boolean not null default false;
+
+	
 ## 2.5.1
 
 * New Audit-Log table. See server/doc/migration folder for an upgrade script. This is optional. To enable the audit-log (currently only for lifecycles), please add an element audit-jdbc-driver and audit-jdbc-url to your cinnamon configuration file.

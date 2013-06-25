@@ -204,8 +204,30 @@ public class CmdInterpreter extends ApiClass implements ApiProvider {
                 UserDAO uDao = daoFactory.getUserDAO(em);
                 user = uDao.get(userId);
             }
-            response = repository.getCommandRegistry().invoke(command, cmd, res, user, repository);
+            CommandRegistry commandRegistry = repository.getCommandRegistry();
+            response = commandRegistry.invoke(command, cmd, res, user, repository);
             etx.commit();
+            
+            EntityTransaction afterWorkTransaction = null;
+            try{
+                log.debug("Execute afterWork changeTriggers");
+                afterWorkTransaction = getEm().getTransaction();
+                afterWorkTransaction.begin();
+                response = commandRegistry.executeAfterWorkTriggers(command, cmd, res, user, repository, response);
+                afterWorkTransaction.commit();
+            }
+            catch (Exception e){
+                log.error("Exception occurred in afterWorkTrigger:",e);
+                if(afterWorkTransaction != null && afterWorkTransaction.isActive()){
+                    try{
+                        afterWorkTransaction.rollback();
+                    }                  
+                    catch (Exception rollBackEx){
+                        log.error("Failed to rollback Exception",rollBackEx);
+                    }
+                }
+            }
+            
             if(repository.getAuditConnection() != null){
                 log.debug("commit audit log");
                 repository.getAuditConnection().commit();                        

@@ -207,4 +207,27 @@ public class CinnamonCommandRegistry implements CommandRegistry {
         }
         return it;
     }
+    
+    public Response executeAfterWorkTriggers(String command, Map<String, Object> params,
+                                     HttpServletResponse res, User user, Repository repository, Response response ){
+        ChangeTriggerDAO ctDao = daoFactory.getChangeTriggerDAO(HibernateSession.getLocalEntityManager());
+        log.debug("searching for all active after-work triggers for: " + command);
+        List<ChangeTrigger> triggerList = ctDao.findAllByCommandAndActiveAndAfterWorkOrderByRanking(command);
+        if(triggerList.isEmpty()){
+            return response;
+        }
+        else{
+            for (ChangeTrigger ct : triggerList) {
+                log.debug("executing afterWork trigger: " + ct.getTriggerType().getName());
+                Class<? extends ITrigger> triggerClass = ct.getTriggerType().getTriggerClass();
+                ITrigger it = getNewTriggerInstance(triggerClass);
+                PoBox poBox = new PoBox(response, user, repository, params, command);
+                poBox = it.executePostCommand(poBox, ct.getConfig());
+                if(poBox.endProcessing){
+                    break;
+                }
+            }
+            return response;
+        }
+    }
 }
